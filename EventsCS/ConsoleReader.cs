@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EventsCS
 {
-    class ConsoleReader : Reader
+    class ConsoleReader : IReader
     {
-        public string readData()
+        public string ReadData()
         {
             string readedData = Console.ReadLine();
 
