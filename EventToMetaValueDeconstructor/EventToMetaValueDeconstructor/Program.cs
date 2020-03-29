@@ -37,7 +37,8 @@ namespace EventToMetaValueDeconstructor
                 string MetaInformation = property.Name + "-" + PropertyType;
                 JsonEvent.EventPropertyMetaValue.Add(MetaInformation);
             }
-            ListOfJsonsFromLogFile.Add(JsonEvent);            
+            ListOfJsonsFromLogFile.Add(JsonEvent);
+            Console.WriteLine(ListOfJsonsFromLogFile[0]);
         }
     }
 }
