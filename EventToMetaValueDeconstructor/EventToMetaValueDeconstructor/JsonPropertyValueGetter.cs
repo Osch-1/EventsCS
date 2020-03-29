@@ -12,14 +12,20 @@ namespace EventToMetaValueDeconstructor
             int PropertyValueEndIndex = inputLine.IndexOf(endingFlag, PropertyValueStartIndex);
             int PropertValueLength = PropertyValueEndIndex - PropertyValueStartIndex;
 
-            return inputLine.Substring(PropertyValueStartIndex, PropertValueLength);
+            if ((PropertyValueStartIndex >= 0) & (PropertyValueEndIndex >= 0))
+                return inputLine.Substring(PropertyValueStartIndex, PropertValueLength);
+            else
+                return "";
         }
 
         public string GetPropertyValue(string inputLine, string startingFlag)
         {
             int PropertyValueStartIndex = inputLine.IndexOf(startingFlag) + startingFlag.Length;//начало названия события                        
 
-            return inputLine.Substring(PropertyValueStartIndex);
+            if (PropertyValueStartIndex >= 0)
+                return inputLine.Substring(PropertyValueStartIndex);
+            else
+                return "";
         }
     }
 }
