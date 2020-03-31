@@ -6,7 +6,7 @@ namespace EventToMetaValueDeconstructor
 {
     interface IGetSubstring
     {
-        string GetPropertyValue(string StringToLookIn, string StartingFlag, string EndingFlag);
-        string GetPropertyValue(string StringToLookIn, string StartingFlag);
+        string Get(string StringToLookIn, string StartingFlag, string EndingFlag);
+        string Get(string StringToLookIn, string StartingFlag);
     }
 }

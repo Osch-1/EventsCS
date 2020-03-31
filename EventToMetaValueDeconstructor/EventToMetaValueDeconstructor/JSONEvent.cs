@@ -7,20 +7,21 @@ namespace EventToMetaValueDeconstructor
 {
     class JSONEvent
     {
+        public string CreationDate { get; set; }
         public string EventKey { get; set; }
         public string EventName { get; set; }
-        public List<string> EventPropertyMetaValue { get; set; }
+        public List<EventProperty> EventPropertyMetaValue { get; set; }
         public JSONEvent()
         {
-            this.EventPropertyMetaValue = new List<String>();
+            this.EventPropertyMetaValue = new List<EventProperty>();
         }
         public JSONEvent(string Key, string Name)
         {
             this.EventKey = Key;
             this.EventName = Name;
-            this.EventPropertyMetaValue = new List<String>();
+            this.EventPropertyMetaValue = new List<EventProperty>();
         }
-        public JSONEvent(string Key, string Name, List<string> ListOfProperties)
+        public JSONEvent(string Key, string Name, List<EventProperty> ListOfProperties)
         {
             this.EventKey = Key;
             this.EventName = Name;
@@ -31,11 +32,11 @@ namespace EventToMetaValueDeconstructor
         public override string ToString()
         {
             string Properties = "";
-            foreach (string Property in this.EventPropertyMetaValue)
+            foreach (EventProperty Property in this.EventPropertyMetaValue)
             {
                 Properties += "  " + Property + "\n\n";
             }
-            return "EventKey:\n" + "  " +this.EventKey + "\n" + "EventName:\n" + "  " + this.EventName + "\n" + "EventPropertyMetaValue:\n" + Properties;
+            return "EventKey:\n" + "  " + this.EventKey + "\n" + "EventName:\n" + "  " + this.EventName + "\n" + "EventPropertyMetaValue:\n" + Properties;
         }
     }
 }
