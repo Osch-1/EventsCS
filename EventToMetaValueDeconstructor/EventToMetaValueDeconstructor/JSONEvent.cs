@@ -15,28 +15,28 @@ namespace EventToMetaValueDeconstructor
         {
             this.EventPropertyMetaValue = new List<EventProperty>();
         }
-        public JSONEvent(string Key, string Name)
+        public JSONEvent(string key, string name)
         {
-            this.EventKey = Key;
-            this.EventName = Name;
+            this.EventKey = key;
+            this.EventName = name;
             this.EventPropertyMetaValue = new List<EventProperty>();
         }
-        public JSONEvent(string Key, string Name, List<EventProperty> ListOfProperties)
+        public JSONEvent(string key, string name, List<EventProperty> listOfProperties)
         {
-            this.EventKey = Key;
-            this.EventName = Name;
-            this.EventPropertyMetaValue = ListOfProperties;
+            this.EventKey = key;
+            this.EventName = name;
+            this.EventPropertyMetaValue = listOfProperties;
         }
         
         
         public override string ToString()
         {
-            string Properties = "";
-            foreach (EventProperty Property in this.EventPropertyMetaValue)
+            string properties = "";
+            foreach (EventProperty property in this.EventPropertyMetaValue)
             {
-                Properties += "  " + Property + "\n\n";
+                properties += "  " + property + "\n\n";
             }
-            return "EventKey:\n" + "  " + this.EventKey + "\n" + "EventName:\n" + "  " + this.EventName + "\n" + "EventPropertyMetaValue:\n" + Properties;
+            return "EventKey:\n" + "  " + this.EventKey + "\n" + "EventName:\n" + "  " + this.EventName + "\n" + "EventPropertyMetaValue:\n" + properties;
         }
     }
 }

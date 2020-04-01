@@ -4,14 +4,14 @@ using System.Text;
 
 namespace EventToMetaValueDeconstructor
 {
-    class SubstringBetweenFlagsGetter : IGetSubstring
+    public class SubstringBetweenFlagsGetter : IGetSubstring
     {
         private readonly int DelimiterLength = 1;
 
         public string Get(string InputLine, string PropertyName, string EndingFlag)
         {            
 
-            if (InputLine.IndexOf(PropertyName) < 0)
+            if ((InputLine.IndexOf(PropertyName) < 0) | (PropertyName == "") | (EndingFlag == ""))
                 return "";
 
             int PropertyValueStartIndex = InputLine.IndexOf(PropertyName) + PropertyName.Length + DelimiterLength;//начало названия события                                        
@@ -26,7 +26,7 @@ namespace EventToMetaValueDeconstructor
 
         public string Get(string InputLine, string PropertyName)
         {
-            if (InputLine.IndexOf(PropertyName) < 0)
+            if ((InputLine.IndexOf(PropertyName) < 0) | (PropertyName == ""))
                 return "";
 
             int PropertyValueStartIndex = InputLine.IndexOf(PropertyName) + PropertyName.Length + DelimiterLength;//начало названия события

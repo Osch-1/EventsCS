@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EventToMetaValueDeconstructor
 {
-    class StringValueTypeDeterminator
+    public class StringValueTypeDeterminator
     {
         private bool IsUInt(string InputLine)
         {
@@ -15,7 +15,7 @@ namespace EventToMetaValueDeconstructor
 
         private bool IsDate(string InputLine)
         {
-            string[] DateFormats = {"dd.MM.yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss.SSSS"};
+            string[] DateFormats = {"dd.MM.yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss.ffff"};
 
             DateTime DateValue;
 

@@ -12,7 +12,7 @@ namespace EventToMetaValueDeconstructor
          public static void Main(string[] args)
          {
             List<JSONEvent> ListOfEventsFromLogFile = new List<JSONEvent>();
-            StringToJSONEventDeserializer ToJSONEventDeserializer = new StringToJSONEventDeserializer();
+            StringToJSONEventDeserializer StringToJSONEventDeserializer = new StringToJSONEventDeserializer();
             string ReadedLine;
 
             StreamReader LogFile = new StreamReader(@"jsons/publish-integration-events-2020-03-10.log");
@@ -20,12 +20,12 @@ namespace EventToMetaValueDeconstructor
 
             while ((ReadedLine = LogFile.ReadLine()) != null)
             {
-                ListOfEventsFromLogFile.Add(ToJSONEventDeserializer.Deserialize(ReadedLine));
+                ListOfEventsFromLogFile.Add(StringToJSONEventDeserializer.Deserialize(ReadedLine));
             }            
             
-            foreach (JSONEvent Event in ListOfEventsFromLogFile)
+            foreach (JSONEvent JsonEvent in ListOfEventsFromLogFile)
             {
-                Console.WriteLine(Event);
+                Console.WriteLine(JsonEvent);
             }
         }
     }
