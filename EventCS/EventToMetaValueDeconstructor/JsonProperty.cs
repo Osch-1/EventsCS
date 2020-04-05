@@ -4,16 +4,16 @@ using System.Text;
 
 namespace EventToMetaValueDeconstructor
 {
-    class EventProperty
+    public class JsonProperty
     {
         public string PropertyName { get; set; }
-        public string PropertyType { get; set; }
-        string DefaultValue { get; }
+        public JsonPropertyType PropertyType { get; set; }
+        public string DefaultValue { get; }
 
-        public EventProperty(string Name, string Type, string DefaultValue)
+        public JsonProperty(string Name, JsonPropertyType Type, string DefaultValue)
         {
             this.PropertyName = Name;
-            this.PropertyType= Type;
+            this.PropertyType = Type;
             this.DefaultValue = DefaultValue;
         }
 

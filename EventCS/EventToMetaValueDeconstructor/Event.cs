@@ -1,38 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using System.Text;
 
 namespace EventToMetaValueDeconstructor
 {
-    class JSONEvent
+    public class Event
     {
         public string CreationDate { get; set; }
         public string EventKey { get; set; }
         public string EventName { get; set; }
-        public List<EventProperty> EventPropertyMetaValue { get; set; }
-        public JSONEvent()
+        public List<JsonProperty> EventPropertyMetaValue { get; set; }
+        public Event()
         {
-            this.EventPropertyMetaValue = new List<EventProperty>();
+            this.EventPropertyMetaValue = new List<JsonProperty>();
         }
-        public JSONEvent(string key, string name)
+        public Event(string key, string name)
         {
             this.EventKey = key;
             this.EventName = name;
-            this.EventPropertyMetaValue = new List<EventProperty>();
+            this.EventPropertyMetaValue = new List<JsonProperty>();
         }
-        public JSONEvent(string key, string name, List<EventProperty> listOfProperties)
+        public Event(string key, string name, List<JsonProperty> listOfProperties)
         {
             this.EventKey = key;
             this.EventName = name;
             this.EventPropertyMetaValue = listOfProperties;
         }
-        
-        
+
+
         public override string ToString()
         {
             string properties = "";
-            foreach (EventProperty property in this.EventPropertyMetaValue)
+            foreach (JsonProperty property in this.EventPropertyMetaValue)
             {
                 properties += "  " + property + "\n\n";
             }

@@ -4,32 +4,30 @@ using System.Text;
 
 namespace EventToMetaValueDeconstructor
 {
-    public class SubstringBetweenFlagsGetter : IGetSubstring
-    {
-        private readonly int DelimiterLength = 1;
-
+    public class SubstringBetweenFlagsGetter: IGetSubstring
+    {        
         public string Get(string InputLine, string PropertyName, string EndingFlag)
-        {            
+        {
 
             if ((InputLine.IndexOf(PropertyName) < 0) | (PropertyName == "") | (EndingFlag == ""))
-                return "";
+                return "NoParam";
 
-            int PropertyValueStartIndex = InputLine.IndexOf(PropertyName) + PropertyName.Length + DelimiterLength;//начало названия события                                        
+            int PropertyValueStartIndex = InputLine.IndexOf(PropertyName) + PropertyName.Length;//начало названия события                                        
             int PropertyValueEndIndex = InputLine.IndexOf(EndingFlag, PropertyValueStartIndex);
             int PropertValueLength = PropertyValueEndIndex - PropertyValueStartIndex;
 
             if ((PropertyValueStartIndex >= 0) & (PropertyValueEndIndex >= 0))
                 return InputLine.Substring(PropertyValueStartIndex, PropertValueLength);
             else
-                return "";
+                return "NoParam";
         }
 
         public string Get(string InputLine, string PropertyName)
         {
             if ((InputLine.IndexOf(PropertyName) < 0) | (PropertyName == ""))
-                return "";
+                return "NoParam";
 
-            int PropertyValueStartIndex = InputLine.IndexOf(PropertyName) + PropertyName.Length + DelimiterLength;//начало названия события
+            int PropertyValueStartIndex = InputLine.IndexOf(PropertyName) + PropertyName.Length;//начало названия события
 
             return InputLine.Substring(PropertyValueStartIndex);
         }
