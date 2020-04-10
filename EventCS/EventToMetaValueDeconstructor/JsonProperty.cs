@@ -7,19 +7,19 @@ namespace EventToMetaValueDeconstructor
     public class JsonProperty
     {
         public string PropertyName { get; set; }
-        public JsonPropertyType PropertyType { get; set; }
-        public string DefaultValue { get; }
+        public PropertyType PropertyType { get; set; }
+        public string SampleValue { get; }
 
-        public JsonProperty(string Name, JsonPropertyType Type, string DefaultValue)
+        public JsonProperty(string Name, PropertyType Type, string defaultValue)
         {
             this.PropertyName = Name;
             this.PropertyType = Type;
-            this.DefaultValue = DefaultValue;
+            this.SampleValue = defaultValue;
         }
 
         public override string ToString()
         {
-            return "Name: " + this.PropertyName + "\n" + "  PropertyType: " + this.PropertyType + "\n" + "  DefaultValue: " + "\n  " + this.DefaultValue;
+            return "Property name: " + this.PropertyName + "\n" + "  Property type: " + this.PropertyType + "\n" + "  Sample value: " + "\n  " + this.SampleValue;
         }
     }
 }

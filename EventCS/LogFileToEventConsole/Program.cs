@@ -10,19 +10,23 @@ namespace LogFileToEventConsole
     {
         static void Main(string[] args)
         {
-            List<Event> ListOfEventsFromLogFile = new List<Event>();
-            JsonEventParser JsonEventParser = new JsonEventParser();
-            string ReadedLine;
+            SubstringBetweenFlagsGetter substringGetter = new SubstringBetweenFlagsGetter();
+            List<Event> listOfEventsFromLogFile = new List<Event>();
+            JsonEventParser jsonEventParser = new JsonEventParser();
+            string readedLine;
 
-            StreamReader LogFile = new StreamReader(@"jsons/publish-integration-events-2020-03-10.log");
+            StreamReader logFile = new StreamReader(@"jsons/publish-integration-events-2020-03-10.log");
 
-            while ((ReadedLine = LogFile.ReadLine()) != null)
+            while ((readedLine = logFile.ReadLine()) != null)
             {
-                ListOfEventsFromLogFile.Add(JsonEventParser.Deserialize(ReadedLine));
-            }            
-            foreach (Event JsonEvent in ListOfEventsFromLogFile)
+                string eventFromLogKey = substringGetter.Get(readedLine, "key:", ",");
+                string jsonFromLog = substringGetter.Get(readedLine, "json:");
+                listOfEventsFromLogFile.Add(jsonEventParser.Parse(eventFromLogKey, jsonFromLog));
+            }           
+            
+            foreach (Event jsonEvent in listOfEventsFromLogFile)
             {
-                Console.WriteLine(JsonEvent);
+                Console.WriteLine(jsonEvent);
             }
         }
     }

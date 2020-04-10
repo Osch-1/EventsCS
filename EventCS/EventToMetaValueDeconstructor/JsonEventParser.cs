@@ -6,32 +6,24 @@ using System.Text;
 namespace EventToMetaValueDeconstructor
 {
     public class JsonEventParser
-    {
-        private IGetSubstring PropertyValueGetter = new SubstringBetweenFlagsGetter();
-        private JpropertyTypeDeterminator JpropertyTypeDeterminator = new JpropertyTypeDeterminator();
+    {        
+        private JpropertyTypeDeterminator jpropertyTypeDeterminator = new JpropertyTypeDeterminator();
 
-        public Event Deserialize(string InputLine)
+        public Event Parse(string eventKey, string Json)
         {
-            string EventKey = PropertyValueGetter.Get(InputLine, "{", "}");
-            string EventName = PropertyValueGetter.Get(InputLine, "key:", ",");
-            Event JsonEvent = new Event(EventKey, EventName);
+            if (Json == "")
+                return new Event();
 
-            string JsonString = PropertyValueGetter.Get(InputLine, "json:");
+            JObject jObjectFromString = JObject.Parse(Json);            
+            List<JsonProperty> listOfProperties = new List<JsonProperty>();
 
-            if (JsonString != "NoParam")
+            foreach (JProperty Property in jObjectFromString.Properties())
             {
-                JObject JObjectFromString = JObject.Parse(JsonString);
-
-                foreach (JProperty Property in JObjectFromString.Properties())
-                {
-                    JsonPropertyType PropertyType = JpropertyTypeDeterminator.Get(Property);
-                    string PropertyValue = Property.Value.ToString();
-
-                    JsonEvent.EventPropertyMetaValue.Add(new JsonProperty(Property.Name, PropertyType, PropertyValue));
-                }
-            }            
-
-            return JsonEvent;
+                PropertyType propertyType = jpropertyTypeDeterminator.Get(Property.Value.ToString());
+                string propertyValue = Property.Value.ToString();
+                listOfProperties.Add(new JsonProperty(Property.Name, propertyType, propertyValue));
+            }
+            return new Event(eventKey, listOfProperties);
         }
     }
 }

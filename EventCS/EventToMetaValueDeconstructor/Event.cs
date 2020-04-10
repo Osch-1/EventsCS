@@ -6,36 +6,37 @@ namespace EventToMetaValueDeconstructor
 {
     public class Event
     {
-        public string CreationDate { get; set; }
+        public string CreationDate { get; set; }        
         public string EventKey { get; set; }
-        public string EventName { get; set; }
-        public List<JsonProperty> EventPropertyMetaValue { get; set; }
+        public List<JsonProperty> JsonPropertiesMetaValue { get; set; }
         public Event()
         {
-            this.EventPropertyMetaValue = new List<JsonProperty>();
+            this.CreationDate = "";
+            this.EventKey = "";
+            this.JsonPropertiesMetaValue = new List<JsonProperty>();
         }
-        public Event(string key, string name)
+        public Event(string key)
         {
+            this.CreationDate = "";
             this.EventKey = key;
-            this.EventName = name;
-            this.EventPropertyMetaValue = new List<JsonProperty>();
+            this.JsonPropertiesMetaValue = new List<JsonProperty>();
         }
-        public Event(string key, string name, List<JsonProperty> listOfProperties)
+        public Event(string key, List<JsonProperty> listOfProperties)
         {
+            this.CreationDate = "";
             this.EventKey = key;
-            this.EventName = name;
-            this.EventPropertyMetaValue = listOfProperties;
+            this.JsonPropertiesMetaValue = listOfProperties;
         }
 
 
         public override string ToString()
         {
             string properties = "";
-            foreach (JsonProperty property in this.EventPropertyMetaValue)
+            foreach (JsonProperty property in this.JsonPropertiesMetaValue)
             {
                 properties += "  " + property + "\n\n";
             }
-            return "EventKey:\n" + "  " + this.EventKey + "\n" + "EventName:\n" + "  " + this.EventName + "\n" + "EventPropertyMetaValue:\n" + properties;
+            return "EventKey:\n" + "  " + this.EventKey + "\n" + "JsonPropertiesMetaValue:\n" + properties;
         }
     }
 }

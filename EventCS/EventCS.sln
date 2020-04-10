@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventToMetaValueDeconstructor", "EventToMetaValueDeconstructor\EventToMetaValueDeconstructor.csproj", "{B312569F-E686-433E-BFDB-6321678C9047}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventToMetaValueDeconstructor", "EventToMetaValueDeconstructor\EventToMetaValueDeconstructor.csproj", "{B312569F-E686-433E-BFDB-6321678C9047}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogFileToEventConsole", "LogFileToEventConsole\LogFileToEventConsole.csproj", "{CBBE988D-FA17-45AE-A8D5-87AA2C682158}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogFileToEventConsole", "LogFileToEventConsole\LogFileToEventConsole.csproj", "{CBBE988D-FA17-45AE-A8D5-87AA2C682158}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventToMetaValueDeconstructorTests", "EventToMetaValueDeconstructorTests\EventToMetaValueDeconstructorTests.csproj", "{15A27CE0-47B9-4480-A855-408951E03D9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventToMetaValueDeconstructorTests", "EventToMetaValueDeconstructorTests\EventToMetaValueDeconstructorTests.csproj", "{15A27CE0-47B9-4480-A855-408951E03D9C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "db-migrations", "db-migrations", "{CD2F0878-538B-477F-AE1D-B659E99B4ABD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

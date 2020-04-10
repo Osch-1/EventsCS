@@ -5,96 +5,24 @@ namespace EventToMetaValueDeconstructorTests
 {
     public class SubstringBetweenFlagsGetterTests
     {
-        [Fact]
-        public void Get_SearchBetweenEmptyStringInEmptyStringWithEmptyEndingFlag_ReturnNoParam()
+        [Theory]
+        [InlineData("", "", "")]
+        [InlineData("", "", "SomeEndingFlag")]
+        [InlineData("", "SomeString", "")]
+        [InlineData("SomeString", "", "")]
+        [InlineData("", "someKey", "someFlag")]
+        [InlineData("SomeStringWithParams", "SomeString", "")]
+        [InlineData("SomeStringWithParams", "", "Params")]
+        public void Get_SomeParamIsEmptyOrNoSuchProperty_ReturnNoParam(string inputLine, string startFlag, string endFlag)
         {
             //Arrange
             SubstringBetweenFlagsGetter substringBetweenFlagsGetter = new SubstringBetweenFlagsGetter();
 
             //Act
-            string result = substringBetweenFlagsGetter.Get("", "", "");
+            string Result = substringBetweenFlagsGetter.Get(inputLine, startFlag, endFlag);
 
             //Assert
-            Assert.Equal("NoParam", result);
-        }
-
-        [Fact]
-        public void Get_BetweenEmptyStringInEmptyStringWithSomeEndingFlag_ReturnNoParam()
-        {
-            //Arrange
-            SubstringBetweenFlagsGetter substringBetweenFlagsGetter = new SubstringBetweenFlagsGetter();
-
-            //Act
-            string result = substringBetweenFlagsGetter.Get("", "", "SomeEndingFlag");
-
-            //Assert
-            Assert.Equal("NoParam", result);
-        }
-
-        [Fact]
-        public void Get_BetweenSomeStringInEmptyStringWithEmptyEndingFlag_ReturnNoParam()
-        {
-            //Arrange
-            SubstringBetweenFlagsGetter substringBetweenFlagsGetter = new SubstringBetweenFlagsGetter();
-
-            //Act
-            string result = substringBetweenFlagsGetter.Get("", "SomeString", "");
-
-            //Assert
-            Assert.Equal("NoParam", result);
-        }
-
-        [Fact]
-        public void Get_BetweenEmptyStringInSomeStringWithEmptyEndingFlag_ReturnNoParam()
-        {
-            //Arrange
-            SubstringBetweenFlagsGetter substringBetweenFlagsGetter = new SubstringBetweenFlagsGetter();
-
-            //Act
-            string result = substringBetweenFlagsGetter.Get("SomeString", "", "");
-
-            //Assert
-            Assert.Equal("NoParam", result);
-        }
-
-        [Fact]
-
-        public void Get_SearchBetweenSomeKeyInEmptyStringWithSomeFlagAsEndingFlag_ReturnNoParam()
-        {
-            //Arrange
-            SubstringBetweenFlagsGetter substringBetweenFlagsGetter = new SubstringBetweenFlagsGetter();
-
-            //Act
-            string result = substringBetweenFlagsGetter.Get("", "someKey", "someFlag");
-
-            //Assert
-            Assert.Equal("NoParam", result);
-        }
-
-        [Fact]
-        public void Get_SearchBetweenSomeStringInSomeStringWithParamsWithEmptyEndingFlag_ReturnNoParam()
-        {
-            //Arrange
-            SubstringBetweenFlagsGetter substringBetweenFlagsGetter = new SubstringBetweenFlagsGetter();
-
-            //Act
-            string result = substringBetweenFlagsGetter.Get("SomeStringWithParams", "SomeString", "");
-
-            //Assert
-            Assert.Equal("NoParam", result);
-        }
-
-        [Fact]
-        public void Get_SearchBetweenEmptyStringInSomeStringWithParamsWithParamsEndingFlag_ReturnNoParam()
-        {
-            //Arrange
-            SubstringBetweenFlagsGetter substringBetweenFlagsGetter = new SubstringBetweenFlagsGetter();
-
-            //Act
-            string result = substringBetweenFlagsGetter.Get("SomeStringWithParams", "", "Params");
-
-            //Assert
-            Assert.Equal("NoParam", result);
+            Assert.Equal("", Result);
         }
 
         [Fact]
@@ -104,10 +32,10 @@ namespace EventToMetaValueDeconstructorTests
             SubstringBetweenFlagsGetter substringBetweenFlagsGetter = new SubstringBetweenFlagsGetter();
 
             //Act
-            string result = substringBetweenFlagsGetter.Get("Text contains key:_IamGreatestKey, good luck", "key:", ",");
+            string Result = substringBetweenFlagsGetter.Get("Text contains key:_IamGreatestKey, good luck", "key:", ",");
 
             //Assert
-            Assert.Equal("_IamGreatestKey", result);
+            Assert.Equal("_IamGreatestKey", Result);
         }
     }
 }

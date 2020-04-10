@@ -6,96 +6,54 @@ namespace EventToMetaValueDeconstructorTests
 {
     public class JpropertyTypeDeterminatorTests
     {
-        [Fact]
-        public void GetType_EmptyString_ReturnString()
+        [Theory]
+        [InlineData("")]
+        [InlineData("This is some input string with 123 [] 213")]
+        [InlineData("123123This is some input string with 123 [] 213")]
+        public void GetType_EmptyString_ReturnString(string inputLine)
         {
             //Arrange
             JpropertyTypeDeterminator stringValueTypeDeterminator = new JpropertyTypeDeterminator();
 
             //Act
-            JsonPropertyType result = stringValueTypeDeterminator.Get(new JProperty("SomeProperty", ""));
+            PropertyType Result = stringValueTypeDeterminator.Get(inputLine);
 
             //Assert
-            Assert.Equal(JsonPropertyType.String, result);
+            Assert.Equal(PropertyType.String, Result);
         }
-
-        [Fact]
-        public void GetType_String0_ReturnInt()
+        
+        [Theory]
+        [InlineData("-123214")]
+        [InlineData("123214")]
+        [InlineData("12.1324124")]
+        [InlineData("1")]
+        [InlineData("-1")]        
+        public void GetType_SomeNumber_ReturnNumber(string inputLine)
         {
             //Arrange
             JpropertyTypeDeterminator stringValueTypeDeterminator = new JpropertyTypeDeterminator();
 
             //Act
-            JsonPropertyType result = stringValueTypeDeterminator.Get(new JProperty("SomeProperty", "0"));
+            PropertyType Result = stringValueTypeDeterminator.Get(inputLine);
 
             //Assert
-            Assert.Equal(JsonPropertyType.Int, result);
+            Assert.Equal(PropertyType.Number, Result);
         }
-
-        [Fact]
-        public void GetType_String21313_ReturnInt()
+        
+        [Theory]
+        [InlineData("01.01.2020 12:12:12")]        
+        [InlineData("2020-03-10 00:00:34.1627")]
+        public void GetType_AnyOfTwoDateTypes_ReturnDate(string inputLine)
         {
             //Arrange
             JpropertyTypeDeterminator stringValueTypeDeterminator = new JpropertyTypeDeterminator();
 
             //Act
-            JsonPropertyType result = stringValueTypeDeterminator.Get(new JProperty("SomeProperty", "21313"));
+            PropertyType Result = stringValueTypeDeterminator.Get(inputLine);
 
             //Assert
-            Assert.Equal(JsonPropertyType.Int, result);
-        }
-
-        [Fact]
-        public void GetType_StringWithFirstFormatDate_ReturnDate()
-        {
-            //Arrange
-            JpropertyTypeDeterminator stringValueTypeDeterminator = new JpropertyTypeDeterminator();
-
-            //Act
-            JsonPropertyType result = stringValueTypeDeterminator.Get(new JProperty("SomeProperty", "01.01.2020 12:12:12"));
-
-            //Assert
-            Assert.Equal(JsonPropertyType.DateTime, result);
-        }
-
-        [Fact]
-        public void GetType_StringWithSecondFormatDate_ReturnDate()
-        {
-            //Arrange
-            JpropertyTypeDeterminator stringValueTypeDeterminator = new JpropertyTypeDeterminator();
-
-            //Act
-            JsonPropertyType result = stringValueTypeDeterminator.Get(new JProperty("SomeProperty", "2020-03-10 00:00:34.1627"));
-
-            //Assert
-            Assert.Equal(JsonPropertyType.DateTime, result);
-        }
-
-        [Fact]
-        public void GetType_JustString_ReturnString()
-        {
-            //Arrange
-            JpropertyTypeDeterminator stringValueTypeDeterminator = new JpropertyTypeDeterminator();
-
-            //Act
-            JsonPropertyType result = stringValueTypeDeterminator.Get(new JProperty("SomeProperty", "JustString"));
-
-            //Assert
-            Assert.Equal(JsonPropertyType.String, result);
-        }
-
-        [Fact]
-        public void GetType_StringWithDigits_ReturnString()
-        {
-            //Arrange
-            JpropertyTypeDeterminator stringValueTypeDeterminator = new JpropertyTypeDeterminator();
-
-            //Act
-            JsonPropertyType result = stringValueTypeDeterminator.Get(new JProperty("SomeProperty", "JustString212"));
-
-            //Assert
-            Assert.Equal(JsonPropertyType.String, result);
-        }
+            Assert.Equal(PropertyType.DateTime, Result);
+        }           
 
         [Fact]
         public void GetType_Array_ReturnList()
@@ -104,10 +62,26 @@ namespace EventToMetaValueDeconstructorTests
             JpropertyTypeDeterminator stringValueTypeDeterminator = new JpropertyTypeDeterminator();
 
             //Act
-            JsonPropertyType result = stringValueTypeDeterminator.Get(new JProperty("SomeProperty", new JArray()));
+            PropertyType Result = stringValueTypeDeterminator.Get("[{\"RoomTypeId\": 309271, \"Physical\": null, \"DateInventories\": [{\"Date\": \"2021-03-11T00:00:00\", \"OutOfOrder\": 0, \"Sold\": 0}]}]");
 
             //Assert
-            Assert.Equal(JsonPropertyType.List, result);
+            Assert.Equal(PropertyType.List, Result);
+        }
+
+        [Theory]
+        [InlineData("{}")]//empty object
+        [InlineData("{\"Name: \"\"Jhon\",\n\"age: \"\"32\"\n}")]//simple object
+        [InlineData("{\"Name: \"\"Jhon\",\n\"age: \"\"32\"\n,\n\"son: \"{\"Name: \"\"Jhon\",\n\"age: \"\"12\"\n}\n}")]//object with object property
+        public void GetType_StructureBetweenBraces_ReturnObject(string inputLine)
+        {
+            //Arrange
+            JpropertyTypeDeterminator stringValueTypeDeterminator = new JpropertyTypeDeterminator();
+
+            //Act
+            PropertyType Result = stringValueTypeDeterminator.Get(inputLine);
+
+            //Assert
+            Assert.Equal(PropertyType.Object, Result);
         }
     }
 }

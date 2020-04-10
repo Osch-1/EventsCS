@@ -1,46 +1,58 @@
-﻿using System;
+﻿using EventToMetaValueDeconstructor;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
-using EventToMetaValueDeconstructor;
 
 namespace EventToMetaValueDeconstructorTests
 {
     public class JsonEventParserTests
     {
-        [Theory]
-        [InlineData("")]
-        [InlineData(@"2020 - 03 - 10 00:00:33.1312 | 44 |[Publish] Events.IntegrationEvents.WebPms:WebPmsRoomsInventoryDelivered")]
-        public void Deserialize_StringsWithoutKeyJsonAndId_ReturnEmtpyEvent(string InputLine)
+        [Fact]
+        public void Parse_EmptyString_ReturnEmptyEvent()
         {
             //Arrange
-            JsonEventParser JsonEventParser = new JsonEventParser();
+            JsonEventParser jsonEventParser = new JsonEventParser();
 
             //Act
-            Event result = JsonEventParser.Deserialize(InputLine);
+            Event Result = jsonEventParser.Parse("SomeEventName", "");
 
             //Assert
-            Assert.Equal("NoParam", result.EventKey);
-            Assert.Equal("NoParam", result.EventName);
-            Assert.Equal(new List<JsonProperty>(), result.EventPropertyMetaValue);
+            Assert.Equal("", Result.EventKey);
+            Assert.Equal("", Result.CreationDate);
+            Assert.Equal(new List<JsonProperty>(), Result.JsonPropertiesMetaValue);
         }
 
         [Fact]
-        public void Deserialize_StringWithAllProperties_ReturnValuableEvent()
+        public void Parse_JsonWithObjectProperty_ReturnEventWithObjectProperty()
         {
             //Arrange
-            JsonEventParser JsonEventParser = new JsonEventParser();
+            JsonEventParser jsonEventParser = new JsonEventParser();
 
             //Act
-            Event result = JsonEventParser.Deserialize("2020-03-10 00:00:33.1502|44|[Publish] {6ffacc6a-322b-48ea-aa4a-399c825e026d} key:ET_TravelLine.PriceOptimizer.IntegrationTLTransit.Events.IntegrationEvents.WebPms:WebPmsRoomListDelivered, json:{\"PropertyId\":1111}");
+            Event Result = jsonEventParser.Parse("SomeEventName", "{Name: \"Jhon\",\nage: \"32\"\n,\nson: {Name: \"Jhon\",\nage: \"12\"\n}\n}");
 
             //Assert
-            Assert.Equal("6ffacc6a-322b-48ea-aa4a-399c825e026d", result.EventKey);
-            Assert.Equal("ET_TravelLine.PriceOptimizer.IntegrationTLTransit.Events.IntegrationEvents.WebPms:WebPmsRoomListDelivered", result.EventName);
-            //Assert.Equal(new List<JsonProperty>() {new JsonProperty("PropertyId", JsonPropertyType.Int, "1111") }, result.EventPropertyMetaValue);
-            Assert.Equal("PropertyId", result.EventPropertyMetaValue[0].PropertyName);
-            Assert.Equal(JsonPropertyType.Int, result.EventPropertyMetaValue[0].PropertyType);
-            Assert.Equal("1111", result.EventPropertyMetaValue[0].DefaultValue);
+            Assert.Equal("SomeEventName", Result.EventKey);
+            Assert.Equal("", Result.CreationDate);
+            Assert.Equal("Property name: Name\n  Property type: String\n  Sample value: \n  Jhon", Result.JsonPropertiesMetaValue[0].ToString());
+            Assert.Equal("Property name: age\n  Property type: Number\n  Sample value: \n  32", Result.JsonPropertiesMetaValue[1].ToString());
+            Assert.Equal("Property name: son\n  Property type: Object\n  Sample value: \n  {\r\n  \"Name\": \"Jhon\",\r\n  \"age\": \"12\"\r\n}", Result.JsonPropertiesMetaValue[2].ToString());
+        }
+
+        [Fact]
+        public void Parse_JsonWithListProperty_ReturnEmptyEvent()
+        {
+            //Arrange
+            JsonEventParser jsonEventParser = new JsonEventParser();
+
+            //Act
+            Event Result = jsonEventParser.Parse("SomeEventName", "{courses: [\"html\", \"css\"]\n}");
+
+            //Assert
+            Assert.Equal("SomeEventName", Result.EventKey);
+            Assert.Equal("", Result.CreationDate);            
+            Assert.Equal("Property name: courses\n  Property type: List\n  Sample value: \n  [\r\n  \"html\",\r\n  \"css\"\r\n]", Result.JsonPropertiesMetaValue[0].ToString());
         }
     }
 }

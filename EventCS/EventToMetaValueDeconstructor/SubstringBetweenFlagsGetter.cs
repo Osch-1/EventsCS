@@ -6,30 +6,30 @@ namespace EventToMetaValueDeconstructor
 {
     public class SubstringBetweenFlagsGetter: IGetSubstring
     {        
-        public string Get(string InputLine, string PropertyName, string EndingFlag)
+        public string Get(string inputLine, string propertyName, string endingFlag)
         {
 
-            if ((InputLine.IndexOf(PropertyName) < 0) | (PropertyName == "") | (EndingFlag == ""))
-                return "NoParam";
+            if ((inputLine.IndexOf(propertyName) < 0) | (propertyName == "") | (endingFlag == ""))
+                return "";
 
-            int PropertyValueStartIndex = InputLine.IndexOf(PropertyName) + PropertyName.Length;//начало названия события                                        
-            int PropertyValueEndIndex = InputLine.IndexOf(EndingFlag, PropertyValueStartIndex);
+            int PropertyValueStartIndex = inputLine.IndexOf(propertyName) + propertyName.Length;//начало названия события                                        
+            int PropertyValueEndIndex = inputLine.IndexOf(endingFlag, PropertyValueStartIndex);
             int PropertValueLength = PropertyValueEndIndex - PropertyValueStartIndex;
 
             if ((PropertyValueStartIndex >= 0) & (PropertyValueEndIndex >= 0))
-                return InputLine.Substring(PropertyValueStartIndex, PropertValueLength);
+                return inputLine.Substring(PropertyValueStartIndex, PropertValueLength);
             else
-                return "NoParam";
+                return "";
         }
 
-        public string Get(string InputLine, string PropertyName)
+        public string Get(string inputLine, string propertyName)
         {
-            if ((InputLine.IndexOf(PropertyName) < 0) | (PropertyName == ""))
-                return "NoParam";
+            if ((inputLine.IndexOf(propertyName) < 0) | (propertyName == ""))
+                return "";
 
-            int PropertyValueStartIndex = InputLine.IndexOf(PropertyName) + PropertyName.Length;//начало названия события
+            int PropertyValueStartIndex = inputLine.IndexOf(propertyName) + propertyName.Length;//начало названия события
 
-            return InputLine.Substring(PropertyValueStartIndex);
+            return inputLine.Substring(PropertyValueStartIndex);
         }
     }
 }
