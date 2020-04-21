@@ -5,10 +5,10 @@ using System.Text;
 namespace EventToMetaValueDeconstructor
 {
     public class Event
-    {
-        public string CreationDate { get; set; }        
+    {        
         public string EventKey { get; set; }
         public List<JsonProperty> JsonPropertiesMetaValue { get; set; }
+        public string CreationDate { get; set; }
         public Event()
         {
             this.CreationDate = "";
@@ -28,6 +28,12 @@ namespace EventToMetaValueDeconstructor
             this.JsonPropertiesMetaValue = listOfProperties;
         }
 
+        public Event(string key, List<JsonProperty> listOfProperties, string creationDate)
+        {
+            this.CreationDate = creationDate;
+            this.EventKey = key;
+            this.JsonPropertiesMetaValue = listOfProperties;
+        }
 
         public override string ToString()
         {
@@ -36,7 +42,7 @@ namespace EventToMetaValueDeconstructor
             {
                 properties += "  " + property + "\n\n";
             }
-            return "EventKey:\n" + "  " + this.EventKey + "\n" + "JsonPropertiesMetaValue:\n" + properties;
+            return "EventKey:\n" + "  " + this.EventKey + "\n" + "CreationDate:\n" + "  " + this.CreationDate + "\n" + "JsonPropertiesMetaValue:\n" + properties;
         }
     }
 }

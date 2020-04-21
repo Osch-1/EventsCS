@@ -1,0 +1,27 @@
+﻿@using EventToMetaValueDeconstructor
+
+@{
+    <tbody class="table_body">
+        @foreach (Event someEvent in Model.AllEvents)
+        {
+            <tr>
+                <th>@someEvent.EventKey</th>
+                <th>@someEvent.CreationDate</th>
+                <td>
+                    <ol>
+                        @foreach (JsonProperty prop in someEvent.JsonPropertiesMetaValue)
+                        {
+                            <li>
+                                <ol class="list-counter-square">
+                                    <li>Property name: @prop.PropertyName</li>
+                                    <li>Property type: @prop.PropertyType</li>
+                                    <li>Sample value:<br>@prop.SampleValue</li>
+                                </ol>
+                            </li>
+                        }
+                    </ol>
+                </td>
+            </tr>
+        }
+    </tbody>
+}

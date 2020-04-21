@@ -18,12 +18,11 @@ namespace EventToMetaValueDeconstructor
         }
 
         private bool IsDate(string inputLine)
-        {
-            string[] DateFormats = { "dd.MM.yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss.ffff" };
+        {            
 
             DateTime DateValue;
 
-            if (DateTime.TryParseExact(inputLine, DateFormats, new CultureInfo("en-US"), DateTimeStyles.None, out DateValue))
+            if (DateTime.TryParse(inputLine, out DateValue))
                 return true;
 
             return false;

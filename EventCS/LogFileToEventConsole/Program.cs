@@ -20,7 +20,7 @@ namespace LogFileToEventConsole
             while ((readedLine = logFile.ReadLine()) != null)
             {
                 string eventFromLogKey = substringGetter.Get(readedLine, "key:", ",");
-                string jsonFromLog = substringGetter.Get(readedLine, "json:");
+                string jsonFromLog = substringGetter.Get(readedLine, "json:");                
                 listOfEventsFromLogFile.Add(jsonEventParser.Parse(eventFromLogKey, jsonFromLog));
             }           
             
