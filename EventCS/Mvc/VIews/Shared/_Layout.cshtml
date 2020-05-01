@@ -3,28 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EventCS</title>    
+    <title>EventCS</title>
     <link href="~/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="~/css/style.css" rel="stylesheet" type="text/css">
+    <link href="~/css/style.css" rel="stylesheet" type="text/css">    
 </head>
 <body>
     <div>
         <nav class="navbar navbar-dark bg-dark">
-            <a class="navbar-brand" href="/Events/GetAllEvents">EventCS</a>
-        </nav>
+            <div class="container">
+                <a class="navbar-brand" href="/Events/EventsList">EventCS</a>
+            </div>
+        </nav>    
         <div class="container">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">EventKey</th>
-                        <th scope="col">CreationDate</th>
-                        <th scope="col">Properties</th>
-                    </tr>
-                </thead>                
-                @RenderBody()                
-            </table>
+            @RenderBody()
         </div>
     </div>
-    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/jquery-3.4.1.min.js"></script>  
+    <script src="~/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,30 @@
+﻿@using EventToMetaValueDeconstructor
+@using Mvc.dto
+
+@{           
+//int i = 0;    
+    <form class="mt-5" method="post">
+        <fieldset disabled>
+            <div class="form-group">
+                <label for="disabledEventKeyInput">EventKey</label>
+                <input type="text" id="disabledEventKeyInput" class="form-control w-50" placeholder="Event key" value="@Model.EventKey" name="eventKey">
+            </div>
+        </fieldset>
+        <fieldset name="properties">
+            <div class="form-group">
+                @foreach (JsonProperty jsonProperty in Model.JsonPropertiesMetaValue)
+                {
+                    <label for="property + @jsonProperty.PropertyName">@jsonProperty.PropertyName</label>
+                    <input type="text" id="property + @jsonProperty.PropertyName" class="form-control w-50" placeholder="@jsonProperty.SampleValue" value="@jsonProperty.SampleValue" name="property">
+
+                    @*@Html.TextArea($"propertiesDto.list[{i}]", "123", new { @class = "form-control" });
+                    i = i + 1;*@
+
+                    <small id="property +  + @jsonProperty.PropertyName help" class="form-text text-muted">Property must contain a @jsonProperty.PropertyType type.</small>
+                }
+                
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </fieldset>
+    </form>    
+}

@@ -17,8 +17,95 @@ namespace Mvc.Data.Repositories
         public SQLEventRepository(string connectionString)
         {
             this._connectionString = connectionString;
+        }        
+
+        public List<Event> GetAllEvents()
+        {
+            List<Event> events = new List<Event>();
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+            using SqlCommand command = connection.CreateCommand();
+
+            command.Connection = connection;
+            command.CommandText =
+                @"SELECT
+                    [EventKey],                            
+                    [CreationDate]                            
+                    FROM Events";
+            
+
+            using SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                string readedKey = Convert.ToString(reader["EventKey"]).Replace(" ", "");
+                string readedDate = Convert.ToString(reader["CreationDate"]);
+
+                var readedEvent = new Event(readedKey, GetJsonProperties(readedKey), readedDate);
+                
+                events.Add(readedEvent);
+            }
+            return events;
+        }
+                
+        public Event GetEvent(string eventKey)
+        {                                    
+            Event readedEvent = new Event();            
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+            using SqlCommand command = connection.CreateCommand();
+            command.Connection = connection;
+            command.Parameters.Add("@eventKey", SqlDbType.VarChar).Value = eventKey;
+            command.CommandText = @"SELECT [EventKey], [CreationDate]
+                                    FROM [Events]
+                                    WHERE [EventKey] = @eventKey";
+
+            using SqlDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                string readedKey = Convert.ToString(reader["EventKey"]).Replace(" ", "");
+                string readedDate = Convert.ToString(reader["CreationDate"]);
+                readedEvent = new Event(readedKey, GetJsonProperties(readedKey), readedDate);
+            }
+                        
+            return readedEvent;
+        }
+        public void Create(Event eventToCreate)
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+            using SqlCommand command = connection.CreateCommand();
+            command.Parameters.Add("@eventKey", SqlDbType.NVarChar).Value = eventToCreate.EventKey;
+            command.Parameters.Add("@creationDate", SqlDbType.NVarChar).Value = eventToCreate.CreationDate;
+            command.CommandText =            
+                @"INSERT INTO [Events] ([EventKey], [CreationDate])
+                  VALUES (@eventKey, @creationDate)";
+            command.ExecuteNonQuery();
+            foreach (JsonProperty property in eventToCreate.JsonPropertiesMetaValue)            
+                PutJsonProperty(property, eventToCreate.EventKey);            
+        }
+        public void Update(Event eventToUpdate)//TODO: make it more productive with merge and join
+        {
+            Delete(eventToUpdate.EventKey);
+            Create(eventToUpdate);
         }
 
+        public void Delete(string eventKey)
+        {
+            if (String.IsNullOrEmpty(eventKey))
+                return;
+
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+            using SqlCommand command = connection.CreateCommand();
+
+            command.Parameters.Add("@eventKey", SqlDbType.NVarChar).Value = eventKey;
+            command.CommandText =
+                @"DELETE FROM [Events]
+                  WHERE [EventKey] = @eventKey
+                  DELETE FROM [EventPropertiesMetaValue]
+                  WHERE [EventKey] = @eventKey";
+            command.ExecuteNonQuery();
+        }
         private List<JsonProperty> GetJsonProperties(string eventKey)
         {
             List<JsonProperty> properties = new List<JsonProperty>();
@@ -58,7 +145,6 @@ namespace Mvc.Data.Repositories
             }
             return properties;
         }
-
         private void PutJsonProperty(JsonProperty property, string eventKey)
         {
             if (String.IsNullOrEmpty(eventKey))
@@ -73,89 +159,7 @@ namespace Mvc.Data.Repositories
             command.CommandText =
                 @"INSERT INTO [EventPropertiesMetaValue] ([PropertyName], [EventKey], [PropertyType], [SampleValue])
                   VALUES (@propertyName, @eventKey, @propertyType, @sampleValue)";
-            command.ExecuteNonQuery();                
-        }
-
-        public List<Event> GetAllEvents()
-        {
-            List<Event> events = new List<Event>();
-            using SqlConnection connection = new SqlConnection(_connectionString);
-            connection.Open();
-            using SqlCommand command = connection.CreateCommand();
-
-            command.Connection = connection;
-            command.CommandText =
-                @"SELECT
-                    [EventKey],                            
-                    [CreationDate]                            
-                    FROM Events";
-            
-
-            using SqlDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                string readedKey = Convert.ToString(reader["EventKey"]).Replace(" ", "");
-                string readedDate = Convert.ToString(reader["CreationDate"]);
-
-                var readedEvent = new Event(readedKey, GetJsonProperties(readedKey), readedDate);
-                
-                events.Add(readedEvent);
-            }
-            return events;
-        }
-                
-        public Event GetEvent(string eventKey)
-        {            
-            Event readedEvent = new Event();            
-            using SqlConnection connection = new SqlConnection(_connectionString);
-            connection.Open();
-            using SqlCommand command = connection.CreateCommand();
-            command.Connection = connection;
-            command.CommandText = $"SELECT [EventKey], [CreationDate] FROM [Events] WHERE [EventKey] = " ;
-            
-
-            using SqlDataReader reader = command.ExecuteReader();
-            string readedKey = Convert.ToString(reader["EventKey"]).Replace(" ", "");
-            string readedDate = Convert.ToString(reader["CreationDate"]);
-            readedEvent = new Event(readedKey, GetJsonProperties(readedKey), readedDate);            
-            
-            return readedEvent;
-        }
-        public void Create(Event eventToCreate)
-        {
-            using SqlConnection connection = new SqlConnection(_connectionString);
-            connection.Open();
-            using SqlCommand command = connection.CreateCommand();
-            command.Parameters.Add("@eventKey", SqlDbType.NVarChar).Value = eventToCreate.EventKey;
-            command.Parameters.Add("@creationDate", SqlDbType.NVarChar).Value = eventToCreate.CreationDate;
-            command.CommandText =            
-                @"INSERT INTO [Events] ([EventKey], [CreationDate])
-                  VALUES (@eventKey, @creationDate)";
             command.ExecuteNonQuery();
-            foreach (JsonProperty property in eventToCreate.JsonPropertiesMetaValue)            
-                PutJsonProperty(property, eventToCreate.EventKey);            
         }
-        public void Update(Event eventToUpdate)//TODO: make it more productive
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete(string eventKey)
-        {
-            if (String.IsNullOrEmpty(eventKey))
-                return;
-
-            using SqlConnection connection = new SqlConnection(_connectionString);
-            connection.Open();
-            using SqlCommand command = connection.CreateCommand();
-
-            command.Parameters.Add("@eventKey", SqlDbType.NVarChar).Value = eventKey;
-            command.CommandText =
-                @"DELETE FROM [Events]
-                  WHERE [EventKey] = @eventKey
-                  DELETE FROM [EventPropertiesMetaValue]
-                  WHERE [EventKey] = @eventKey";
-            command.ExecuteNonQuery();
-        }                
     }
 }

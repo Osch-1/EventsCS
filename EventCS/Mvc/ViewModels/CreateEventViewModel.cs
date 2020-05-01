@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Mvc.ViewModels
 {
-    public class EventViewModel
+    public class CreateEventViewModel
     {
-        public Event Event { get; set; }
+        public string EventKey { get; set; }        
+        public List<JsonProperty> JsonPropertiesMetaValue { get; set; }
     }
 }

@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using EventToMetaValueDeconstructor;
 using Microsoft.AspNetCore.Mvc;
 using Mvc.Data.Repositories;
+using Mvc.dto;
 using Mvc.ViewModels;
+using Newtonsoft.Json;
 
 namespace Mvc.Controllers
 {    
@@ -16,25 +18,34 @@ namespace Mvc.Controllers
         {
             _eventRepository = eventRepository;
         }        
-        public ViewResult GetAllEvents()
+        public ViewResult EventsList()
         {
             ViewBag.Title = "События";
             EventsListViewModel eventsViewModel = new EventsListViewModel();
             var Events = _eventRepository.GetAllEvents();
             eventsViewModel.AllEvents = Events;
             return View(eventsViewModel);
-        }        
+        }
 
-        [HttpPost("{eventKey}")]
-        public ViewResult GetEvent(string eventKey)
-        {
+        [HttpGet]
+        public ViewResult CreateEvent([FromQuery(Name = "eventKey")] string eventKey)
+        {            
             if (eventKey is null)
             {
                 return View("");
-            }
-            EventViewModel eventViewModel = new EventViewModel();
-            var Event = _eventRepository.GetEvent(eventKey);
-            return View(eventViewModel);
+            }            
+            CreateEventViewModel eventViewModel = new CreateEventViewModel();
+            var @event = _eventRepository.GetEvent(eventKey);
+            eventViewModel.EventKey = @event.EventKey;            
+            eventViewModel.JsonPropertiesMetaValue = @event.JsonPropertiesMetaValue;
+            return View("CreateEvent", eventViewModel);
+        }
+
+        [HttpPost]
+        public string CreateEvent()
+        {
+
+            return "Working on it..";
         }
     }
 }

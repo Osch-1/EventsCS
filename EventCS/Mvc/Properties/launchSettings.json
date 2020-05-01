@@ -15,7 +15,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "launchUrl": "Events/GetAllEvents"
+      "launchUrl": "Events/EventsList"
     },
     "Mvc": {
       "commandName": "Project",
