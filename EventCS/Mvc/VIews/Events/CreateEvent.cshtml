@@ -1,30 +1,37 @@
 ﻿@using EventToMetaValueDeconstructor
 @using Mvc.dto
 
-@{           
-//int i = 0;    
-    <form class="mt-5" method="post">
-        <fieldset disabled>
+@{
+    int i = 0;    
+    <h1>Event creation form</h1>
+    <form class="mt-2" method="post">
+        <fieldset>
             <div class="form-group">
                 <label for="disabledEventKeyInput">EventKey</label>
-                <input type="text" id="disabledEventKeyInput" class="form-control w-50" placeholder="Event key" value="@Model.EventKey" name="eventKey">
-            </div>
-        </fieldset>
-        <fieldset name="properties">
-            <div class="form-group">
+                <input type="text" id="EventKey" name="EventKey" class="form-control w-50 mb-4" placeholder="Event key" value="@Model.EventKey" readonly />
+
                 @foreach (JsonProperty jsonProperty in Model.JsonPropertiesMetaValue)
                 {
-                    <label for="property + @jsonProperty.PropertyName">@jsonProperty.PropertyName</label>
-                    <input type="text" id="property + @jsonProperty.PropertyName" class="form-control w-50" placeholder="@jsonProperty.SampleValue" value="@jsonProperty.SampleValue" name="property">
+                    string inputType = "text";
+                    switch (jsonProperty.PropertyType)
+                    {
+                        case PropertyType.Number:
+                            inputType = "number";
+                            break;
+                        default:
+                            break;
+                    };
 
-                    @*@Html.TextArea($"propertiesDto.list[{i}]", "123", new { @class = "form-control" });
-                    i = i + 1;*@
-
-                    <small id="property +  + @jsonProperty.PropertyName help" class="form-text text-muted">Property must contain a @jsonProperty.PropertyType type.</small>
+                    <label for="jsonInfo_Properties[@i]_Name">Property name</label>
+                    <input type="text" id="jsonInfo_Properties[@i]_Name" name="jsonInfo.Properties[@i].Name" class="form-control w-50 mb-3" placeholder="Property name" value="@jsonProperty.PropertyName" readonly />
+                    <label for="jsonInfo_Properties[@i]">Value type</label>
+                    <input type="text" id="jsonInfo_Properties[@i]_Type" name="jsonInfo.Properties[@i].Type" class="form-control w-50 mb-3" placeholder="Value type" value="@jsonProperty.PropertyType" readonly />
+                    <label for="jsonInfo_Properties[@i]_Value">Property value</label>
+                    <input type=@inputType id="jsonInfo_Properties[@i]_Value" name="jsonInfo.Properties[@i].Value" class="form-control w-50 mb-5" placeholder="@jsonProperty.SampleValue" value="@jsonProperty.SampleValue" required>                    
+                    i = i + 1;
                 }
-                
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary mb-3">Submit</button>
         </fieldset>
-    </form>    
+    </form>
 }

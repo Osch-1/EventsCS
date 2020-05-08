@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using EventToMetaValueDeconstructor;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mvc.Data.Repositories;
 using Mvc.dto;
@@ -32,20 +34,32 @@ namespace Mvc.Controllers
         {            
             if (eventKey is null)
             {
-                return View("");
-            }            
+                ErrorViewModel errorViewModel = new ErrorViewModel();
+                errorViewModel.ErrorMessage = "Parameter eventKey can't be null or empty";
+                return View("Error", errorViewModel);//error page
+            }
             CreateEventViewModel eventViewModel = new CreateEventViewModel();
-            var @event = _eventRepository.GetEvent(eventKey);
+            var @event = _eventRepository.GetEvent(eventKey);            
             eventViewModel.EventKey = @event.EventKey;            
             eventViewModel.JsonPropertiesMetaValue = @event.JsonPropertiesMetaValue;
             return View("CreateEvent", eventViewModel);
         }
 
         [HttpPost]
-        public string CreateEvent()
+        public string CreateEvent(JsonInfo jsonInfo)
         {
+            DateTime localDate = DateTime.Now;
+            Property dataProperty = new Property("CreationDate", localDate.ToString(), "DateTime");
+            jsonInfo.Properties.Add(dataProperty);
 
-            return "Working on it..";
+            return JsonConvert.SerializeObject(jsonInfo);
+        }
+
+        private string SerializeEvent(Event @event)
+        {
+            string serializedEvent="{}";
+
+            return serializedEvent;
         }
     }
 }

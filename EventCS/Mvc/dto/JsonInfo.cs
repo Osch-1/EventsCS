@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace Mvc.dto
 {
-    public class PropertiesDto
-    {
-        public List<String> list { get; set; }
-        public string name { get; set; }
+    public class JsonInfo
+    {        
+        public List<Property> Properties { get; set; }
     }
 }
