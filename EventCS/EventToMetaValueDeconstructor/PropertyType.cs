@@ -4,6 +4,5 @@
     Number,
     DateTime,
     List,
-    Object,
-    NoType
+    Object
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace Mvc.dto
     {
         public string Name { get; set; }
         public string Value { get; set; }
+        [JsonIgnore]
         public string Type { get; set; }
 
         public Property()

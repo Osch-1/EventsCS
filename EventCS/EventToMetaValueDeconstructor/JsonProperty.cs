@@ -13,7 +13,7 @@ namespace EventToMetaValueDeconstructor
         public JsonProperty()
         {
             this.PropertyName = "";
-            this.PropertyType = PropertyType.NoType;
+            this.PropertyType = PropertyType.String;
             this.PropertyName = "";
         }
         public JsonProperty(string Name, PropertyType Type, string defaultValue)

@@ -131,8 +131,7 @@ namespace Mvc.Data.Repositories
                     "DateTime" => PropertyType.DateTime,
                     "List" => PropertyType.List,
                     "Object" => PropertyType.Object,
-                    "NoType" => PropertyType.NoType,
-                    _ => PropertyType.NoType,
+                    _ => PropertyType.String
                 };
 
                 var readedProperty = new JsonProperty

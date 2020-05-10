@@ -10,6 +10,7 @@ using Mvc.Data.Repositories;
 using Mvc.dto;
 using Mvc.ViewModels;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Mvc.Controllers
 {    
@@ -21,14 +22,16 @@ namespace Mvc.Controllers
             _eventRepository = eventRepository;
         }        
         public ViewResult EventsList()
-        {
-            ViewBag.Title = "События";
-            EventsListViewModel eventsViewModel = new EventsListViewModel();
+        {            
             var Events = _eventRepository.GetAllEvents();
-            eventsViewModel.AllEvents = Events;
+
+            EventsListViewModel eventsViewModel = new EventsListViewModel
+            {
+                AllEvents = Events
+            };
+
             return View(eventsViewModel);
         }
-
         [HttpGet]
         public ViewResult CreateEvent([FromQuery(Name = "eventKey")] string eventKey)
         {            
@@ -38,28 +41,54 @@ namespace Mvc.Controllers
                 errorViewModel.ErrorMessage = "Parameter eventKey can't be null or empty";
                 return View("Error", errorViewModel);//error page
             }
-            CreateEventViewModel eventViewModel = new CreateEventViewModel();
-            var @event = _eventRepository.GetEvent(eventKey);            
-            eventViewModel.EventKey = @event.EventKey;            
-            eventViewModel.JsonPropertiesMetaValue = @event.JsonPropertiesMetaValue;
+
+            var @event = _eventRepository.GetEvent(eventKey);
+
+            CreateEventViewModel eventViewModel = new CreateEventViewModel
+            {
+                EventKey = @event.EventKey,
+                JsonPropertiesMetaValue = @event.JsonPropertiesMetaValue
+            };
+
             return View("CreateEvent", eventViewModel);
         }
-
         [HttpPost]
-        public string CreateEvent(JsonInfo jsonInfo)
+        public ViewResult CreateEvent(JsonInfo jsonInfo)
         {
             DateTime localDate = DateTime.Now;
+            Guid guid = Guid.NewGuid();
             Property dataProperty = new Property("CreationDate", localDate.ToString(), "DateTime");
+            Property idProperty = new Property("Id", guid.ToString(), "String");            
+            jsonInfo.Properties.Add(idProperty);
             jsonInfo.Properties.Add(dataProperty);
 
-            return JsonConvert.SerializeObject(jsonInfo);
+
+            string json = CreateJson(jsonInfo);
+
+            FormedJsonViewModel jsonViewModel = new FormedJsonViewModel
+            {
+                Json = json
+            };
+
+            return View("FormedJson", jsonViewModel);
         }
-
-        private string SerializeEvent(Event @event)
+        private string CreateJson(JsonInfo jsonInfo)
         {
-            string serializedEvent="{}";
+            string json = "";
 
-            return serializedEvent;
+            foreach (Property property in jsonInfo.Properties)
+            {                
+                if (property.Type == "String" || property.Type == "DateTime")
+                    json += $"\"{property.Name}\": \"{property.Value}\", ";
+                else
+                    json += $"\"{property.Name}\": {property.Value}, ";
+            }
+
+            json = json.Remove(json.Length - 2);
+            json = json.Insert(0, "{");
+            json += "}";
+
+            return json.ToString();
         }
     }
 }
