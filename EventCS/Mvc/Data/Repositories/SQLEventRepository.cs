@@ -156,7 +156,7 @@ namespace Mvc.Data.Repositories
             command.Parameters.Add("@propertyType", SqlDbType.NVarChar).Value = property.PropertyType;
             command.Parameters.Add("@sampleValue", SqlDbType.NVarChar).Value = property.SampleValue;
             command.CommandText =
-                @"INSERT INTO [EventPropertiesMetaValue] ([PropertyName], [EventKey], [PropertyType], [SampleValue])
+                @"INSERT INTO [EventPropertiesMetaValue] ([PropertyName], [EventKey], [ValueType], [SampleValue])
                   VALUES (@propertyName, @eventKey, @propertyType, @sampleValue)";
             command.ExecuteNonQuery();
         }

@@ -8,7 +8,8 @@ namespace EventToMetaValueDeconstructor
     {        
         public string Get(string inputLine, string propertyName, string endingFlag)
         {
-
+            if (String.IsNullOrEmpty(inputLine))
+                return "";
             if ((inputLine.IndexOf(propertyName) < 0) | (propertyName == "") | (endingFlag == ""))
                 return "";
 

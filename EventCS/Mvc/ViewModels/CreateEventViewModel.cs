@@ -8,7 +8,7 @@ namespace Mvc.ViewModels
 {
     public class CreateEventViewModel
     {
-        public string EventKey { get; set; }        
+        public string EventKey { get; set; }
         public List<JsonProperty> JsonPropertiesMetaValue { get; set; }
     }
 }

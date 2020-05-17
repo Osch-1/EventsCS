@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Mvc.dto
 {
     public class JsonInfo
-    {        
-        public List<Property> Properties { get; set; }
+    {                
+        public List<String> Properties { get; set; }
     }
 }

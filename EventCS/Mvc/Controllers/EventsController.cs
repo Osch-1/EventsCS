@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using EventToMetaValueDeconstructor;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Mvc.Data.Repositories;
 using Mvc.dto;
 using Mvc.ViewModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
 
 namespace Mvc.Controllers
 {    
@@ -21,74 +24,192 @@ namespace Mvc.Controllers
         {
             _eventRepository = eventRepository;
         }        
+        [HttpGet]
         public ViewResult EventsList()
-        {            
-            var Events = _eventRepository.GetAllEvents();
-
-            EventsListViewModel eventsViewModel = new EventsListViewModel
+        {
+            try
             {
-                AllEvents = Events
-            };
+                var Events = _eventRepository.GetAllEvents();
+                EventsListViewModel eventsViewModel = new EventsListViewModel
+                {
+                    AllEvents = Events
+                };
 
-            return View(eventsViewModel);
+                return View(eventsViewModel);
+            }
+            catch (SqlException e)
+            {
+                ErrorViewModel errorViewModel = new ErrorViewModel
+                {
+                    ErrorMessage = e.Message
+                };
+            return View("Error", errorViewModel);
+            }            
         }
         [HttpGet]
         public ViewResult CreateEvent([FromQuery(Name = "eventKey")] string eventKey)
         {            
-            if (eventKey is null)
+            if (String.IsNullOrEmpty(eventKey))
             {
-                ErrorViewModel errorViewModel = new ErrorViewModel();
-                errorViewModel.ErrorMessage = "Parameter eventKey can't be null or empty";
+                ErrorViewModel errorViewModel = new ErrorViewModel
+                {
+                    ErrorMessage = "Parameter eventKey can't be null or empty"
+                };
                 return View("Error", errorViewModel);//error page
             }
 
-            var @event = _eventRepository.GetEvent(eventKey);
-
-            CreateEventViewModel eventViewModel = new CreateEventViewModel
+            try
             {
-                EventKey = @event.EventKey,
-                JsonPropertiesMetaValue = @event.JsonPropertiesMetaValue
-            };
+                var @event = _eventRepository.GetEvent(eventKey);
 
-            return View("CreateEvent", eventViewModel);
+                if (String.IsNullOrEmpty(@event.EventKey))
+                {
+                    ErrorViewModel errorViewModel = new ErrorViewModel
+                    {
+                        ErrorMessage = $"No such event \"{eventKey}\" was found"
+                    };
+                    return View("Error", errorViewModel);//error page
+                }
+
+                CreateEventViewModel eventViewModel = new CreateEventViewModel
+                {
+                    EventKey = @event.EventKey,
+                    JsonPropertiesMetaValue = @event.JsonPropertiesMetaValue
+                };
+
+                return View("CreateEvent", eventViewModel);
+            }
+            catch (SqlException e)
+            {
+                ErrorViewModel errorViewModel = new ErrorViewModel
+                {
+                    ErrorMessage = e.Message
+                };
+                return View("Error", errorViewModel);
+            }
         }
         [HttpPost]
-        public ViewResult CreateEvent(JsonInfo jsonInfo)
+        public ViewResult CreateEvent(JsonInfo jsonInfo, string eventKey)
         {
-            DateTime localDate = DateTime.Now;
-            Guid guid = Guid.NewGuid();
-            Property dataProperty = new Property("CreationDate", localDate.ToString(), "DateTime");
-            Property idProperty = new Property("Id", guid.ToString(), "String");            
-            jsonInfo.Properties.Add(idProperty);
-            jsonInfo.Properties.Add(dataProperty);
-
-
-            string json = CreateJson(jsonInfo);
-
-            FormedJsonViewModel jsonViewModel = new FormedJsonViewModel
+            try
             {
-                Json = json
-            };
+                Event @eventToCreate = _eventRepository.GetEvent(eventKey);
 
-            return View("FormedJson", jsonViewModel);
-        }
-        private string CreateJson(JsonInfo jsonInfo)
-        {
-            string json = "";
+                if (String.IsNullOrEmpty(@eventToCreate.EventKey))
+                {
+                    ErrorViewModel errorViewModel = new ErrorViewModel
+                    {
+                        ErrorMessage = $"No such event \"{eventKey}\" was found"
+                    };
+                    return View("Error", errorViewModel);//error page
+                }
 
-            foreach (Property property in jsonInfo.Properties)
-            {                
-                if (property.Type == "String" || property.Type == "DateTime")
-                    json += $"\"{property.Name}\": \"{property.Value}\", ";
-                else
-                    json += $"\"{property.Name}\": {property.Value}, ";
+                Guid guid = Guid.NewGuid();
+                String idProperty = $"\"Id\":\"{guid}\"";
+                string json = "";
+
+                for (int i = 0; i < jsonInfo.Properties.Count(); i++)
+                {
+                    JsonProperty property = @eventToCreate.JsonPropertiesMetaValue[i];
+                    String propertyValue = jsonInfo.Properties[i];
+
+                    if (String.IsNullOrEmpty(propertyValue))
+                        json += $"\"{property.PropertyName}\": null, ";
+                    else
+                        if (property.PropertyType == PropertyType.String || property.PropertyType == PropertyType.DateTime)
+                        json += $"\"{property.PropertyName}\": \"{propertyValue}\", ";
+                    else
+                        json += $"\"{property.PropertyName}\": {propertyValue}, ";
+                }
+
+                String creationTime = GetCurrentUtcDate();
+                String dataProperty = $"\"Creation date\":\"{creationTime}\"";
+
+                json += $" {idProperty}, {dataProperty}}}";
+                json = json.Insert(0, "{");
+
+                FormedJsonViewModel jsonViewModel = new FormedJsonViewModel
+                {
+                    Json = json
+                };
+
+
+                return View("FormedJson", jsonViewModel);
             }
-
-            json = json.Remove(json.Length - 2);
-            json = json.Insert(0, "{");
-            json += "}";
-
-            return json.ToString();
+            catch (SqlException e)
+            {
+                ErrorViewModel errorViewModel = new ErrorViewModel
+                {
+                    ErrorMessage = e.Message
+                };
+                return View("Error", errorViewModel);
+            }
+        }        
+        [HttpGet]
+        public ViewResult AddEventsFromLog()
+        {
+            return View("AddEventsFromLog");
         }
-    }
+        [HttpPost]
+        public ViewResult AddEventsFromLog(String eventsToAdd)
+        {
+            try
+            {
+                SubstringBetweenFlagsGetter substringGetter = new SubstringBetweenFlagsGetter();                
+                JsonEventParser jsonEventParser = new JsonEventParser();                
+
+                while (true)
+                {
+                    string eventFromLogKey = substringGetter.Get(eventsToAdd, "key:", ",");
+                    string jsonFromLog = substringGetter.Get(eventsToAdd, "json:", "\n");
+                    if ((String.IsNullOrEmpty(eventFromLogKey)) || (String.IsNullOrEmpty(jsonFromLog)))                    
+                        break;                    
+
+                    int startingKeyIndex = eventsToAdd.IndexOf("key:");
+                    int startingJsonIndex = eventsToAdd.IndexOf("json:");
+
+                    eventsToAdd = eventsToAdd.Remove(startingJsonIndex, jsonFromLog.Length);
+                    eventsToAdd = eventsToAdd.Remove(startingKeyIndex, eventFromLogKey.Length);
+
+                    Event newEvent = jsonEventParser.Parse(eventFromLogKey, jsonFromLog);
+                    Event eventFromDb = _eventRepository.GetEvent(eventFromLogKey);                    
+
+                    if (eventFromDb.EventKey == "")
+                    {
+                        _eventRepository.Create(newEvent);
+                    }
+                    else
+                    {
+                        DateTime newEventCreationDate = DateTime.Parse(newEvent.CreationDate);
+                        DateTime eventFromDbCreationDate = DateTime.Parse(eventFromDb.CreationDate);
+                        if (newEventCreationDate > eventFromDbCreationDate)
+                            _eventRepository.Update(newEvent);
+                    }
+                }
+
+                var Events = _eventRepository.GetAllEvents();
+                EventsListViewModel eventsViewModel = new EventsListViewModel
+                {
+                    AllEvents = Events
+                };
+                
+                return View("EventsList", eventsViewModel);
+            }
+            catch (Exception e)
+            {
+                ErrorViewModel errorViewModel = new ErrorViewModel
+                {
+                    ErrorMessage = e.Message
+                };                
+                return View("Error", errorViewModel);
+            }                
+                                   
+        }
+        private string GetCurrentUtcDate()
+        {
+            DateTime date = DateTime.UtcNow;
+            String currentDate = date.ToString("O");
+            return currentDate;
+        }
+    }    
 }

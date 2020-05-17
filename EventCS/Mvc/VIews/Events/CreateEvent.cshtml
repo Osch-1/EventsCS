@@ -3,35 +3,37 @@
 
 @{
     int i = 0;    
-    <h1>Event creation form</h1>
-    <form class="mt-2" method="post">
+    <b>@Model.EventKey</b>
+    <form class="mt-4" method="post">
         <fieldset>
             <div class="form-group">
-                <label for="disabledEventKeyInput">EventKey</label>
-                <input type="text" id="EventKey" name="EventKey" class="form-control w-50 mb-4" placeholder="Event key" value="@Model.EventKey" readonly />
-
                 @foreach (JsonProperty jsonProperty in Model.JsonPropertiesMetaValue)
-                {
-                    string inputType = "text";
-                    switch (jsonProperty.PropertyType)
-                    {
-                        case PropertyType.Number:
-                            inputType = "number";
-                            break;
-                        default:
-                            break;
-                    };
-
-                    <label for="jsonInfo_Properties[@i]_Name">Property name</label>
-                    <input type="text" id="jsonInfo_Properties[@i]_Name" name="jsonInfo.Properties[@i].Name" class="form-control w-50 mb-3" placeholder="Property name" value="@jsonProperty.PropertyName" readonly />
-                    <label for="jsonInfo_Properties[@i]">Value type</label>
-                    <input type="text" id="jsonInfo_Properties[@i]_Type" name="jsonInfo.Properties[@i].Type" class="form-control w-50 mb-3" placeholder="Value type" value="@jsonProperty.PropertyType" readonly />
-                    <label for="jsonInfo_Properties[@i]_Value">Property value</label>
-                    <input type=@inputType id="jsonInfo_Properties[@i]_Value" name="jsonInfo.Properties[@i].Value" class="form-control w-50 mb-5" placeholder="@jsonProperty.SampleValue" value="@jsonProperty.SampleValue" required>                    
+                {                    
+                    <label for="jsonInfo_Properties[@i]_Name" class="mt-1">@jsonProperty.PropertyName (@jsonProperty.PropertyType)</label>
+                    <div class="row w-100">
+                        <div class="col-sm-3">
+                            @if ((jsonProperty.PropertyType == PropertyType.Object) || (jsonProperty.PropertyType == PropertyType.List))
+                            {
+                                <textarea id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" class="textInput" rows="6" placeholder="Впишите значение сюда"></textarea>
+                            }
+                            else
+                            {
+                                <input type="text" id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" class="form-control mb-2" placeholder="Впишите значение сюда"/>
+                            }
+                        </div>
+                        <div class="col-sm-1">
+                            <a class="btn btn btn-primary" data-toggle="collapse" href="#sampleValue_@i" role="button" aria-expanded="false" aria-controls="sampleValue_@i">Пример</a>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="collapse multi-collapse" id="sampleValue_@i">
+                                <input type=text id="SampleValue[@i]" class="form-control mb-2" placeholder="Пример значения" value="@jsonProperty.SampleValue" disabled />
+                            </div>                            
+                        </div>
+                    </div>
                     i = i + 1;
                 }
             </div>
-            <button type="submit" class="btn btn-primary mb-3">Submit</button>
+            <button type="submit" class="btn btn-success btn-lg mb-3">Сгенерировать json</button>
         </fieldset>
     </form>
 }

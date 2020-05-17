@@ -2,36 +2,42 @@
 
 @{
     <h1 class="mb-3">Events</h1>
-    <table class="table table-striped">
-        <thead>
+    <div class="row mb-2">
+        <div class="col-10">
+            <input type="text" class="form-control pull-right w-25" id="search" placeholder="Поиск по таблице">
+        </div>
+        <div class="col-2">
+            <button type="button" onclick="location.href='/Events/AddEventsFromLog'" class="btn btn-outline-secondary float-right">+Добавить события</button>
+        </div>
+    </div>    
+    <table class="table table-bordered" id="eventsTable">
+        <thead class="thead-dark">
             <tr>
                 <th scope="col">EventKey</th>
-                <th scope="col">CreationDate</th>
-                <th scope="col">Properties</th>
-                <th scope="col">Creation link</th>
+                <th scope="col">Дата обновления</th>
+                <th scope="col">Поля события</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody class="table_body">
             @foreach (Event someEvent in Model.AllEvents)
             {
                 <tr>
-                    <th>@someEvent.EventKey</th>
-                    <th>@someEvent.CreationDate</th>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All properties</button>
-                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
+                    <td class="w-25 align-middle">@someEvent.EventKey</td>
+                    <td class="w-25 align-middle">@someEvent.CreationDate</td>
+                    <td class="w-25">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Все поля</button>
+                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
+                            <div class="dropdown-divider m-0 p-0"></div>
+                            @foreach (JsonProperty property in someEvent.JsonPropertiesMetaValue)
+                            {
+                                <p class="dropdown-item-text m-0 disabled">@property.PropertyName</p>
                                 <div class="dropdown-divider m-0 p-0"></div>
-                                @foreach (JsonProperty property in someEvent.JsonPropertiesMetaValue)
-                                {
-                                    <p class="dropdown-item-text m-0">@property.PropertyName</p>
-                                    <div class="dropdown-divider m-0 p-0"></div>
-                                }
-                            </div>
+                            }
                         </div>
                     </td>
-                    <td>
-                        <button onclick="location.href='/Events/CreateEvent?eventKey=@someEvent.EventKey'" class="btn btn-outline-primary">Создать</button> @*Нужно сделать защиту, но не знаю как*@
+                    <td class="w-25 ">
+                        <button onclick="location.href='/Events/CreateEvent?eventKey=@someEvent.EventKey'" class="btn btn-outline-primary">Сгенерировать</button> @*Нужно сделать защиту, но не знаю как*@
                     </td>
                 </tr>
             }

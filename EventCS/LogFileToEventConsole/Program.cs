@@ -27,7 +27,7 @@ namespace LogFileToEventConsole
             foreach (Event jsonEvent in listOfEventsFromLogFile)
             {
                 Console.WriteLine(jsonEvent);
-            }
+            }            
         }
     }
 }
