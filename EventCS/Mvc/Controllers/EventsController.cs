@@ -191,19 +191,19 @@ namespace Mvc.Controllers
                 EventsListViewModel eventsViewModel = new EventsListViewModel
                 {
                     AllEvents = Events
-                };
-                
-                return View("EventsList", eventsViewModel);
+                };                
+
+                return View("EventsList", eventsViewModel);                
             }
             catch (Exception e)
             {
                 ErrorViewModel errorViewModel = new ErrorViewModel
                 {
                     ErrorMessage = e.Message
-                };                
+                };
+                
                 return View("Error", errorViewModel);
-            }                
-                                   
+            }                                                  
         }
         private string GetCurrentUtcDate()
         {
