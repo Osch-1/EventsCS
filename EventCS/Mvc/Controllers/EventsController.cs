@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -71,13 +72,13 @@ namespace Mvc.Controllers
                     return View("Error", errorViewModel);//error page
                 }
 
-                CreateEventViewModel eventViewModel = new CreateEventViewModel
+                CreateEventViewModel createEventViewModel = new CreateEventViewModel
                 {
                     EventKey = @event.EventKey,
                     JsonPropertiesMetaValue = @event.JsonPropertiesMetaValue
                 };
 
-                return View("CreateEvent", eventViewModel);
+                return View("CreateEvent", createEventViewModel);
             }
             catch (SqlException e)
             {
@@ -127,14 +128,16 @@ namespace Mvc.Controllers
 
                 json += $" {idProperty}, {dataProperty}}}";
                 json = json.Insert(0, "{");
-
-                FormedJsonViewModel jsonViewModel = new FormedJsonViewModel
+                
+                CreateEventViewModel createEventViewModel = new CreateEventViewModel
                 {
-                    Json = json
+                    EventKey = eventToCreate.EventKey,
+                    JsonPropertiesMetaValue = eventToCreate.JsonPropertiesMetaValue,
+                    CreatedJson = json,
+                    EventId = guid.ToString()
                 };
 
-
-                return View("FormedJson", jsonViewModel);
+                return View("CreateEvent", createEventViewModel);
             }
             catch (SqlException e)
             {

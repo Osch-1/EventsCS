@@ -10,5 +10,7 @@ namespace Mvc.ViewModels
     {
         public string EventKey { get; set; }
         public List<JsonProperty> JsonPropertiesMetaValue { get; set; }
+        public string CreatedJson { get; set; }
+        public string EventId { get; set; }
     }
 }

@@ -13,15 +13,15 @@
     <table class="table table-bordered" id="eventsTable">
         <thead class="thead-dark">
             <tr>
-                <th scope="col">EventKey</th>
-                <th scope="col">Дата обновления</th>
+                <th scope="col">EventKey (x-pro-event-type)</th>
+                <th scope="col">Дата добавления</th>
                 <th scope="col">Поля события</th>
                 <th scope="col"></th>
             </tr>
         </thead>
         <tbody class="table_body">
             @foreach (Event someEvent in Model.AllEvents)
-            {
+             {
                 <tr>
                     <td class="w-25 align-middle">@someEvent.EventKey</td>
                     <td class="w-25 align-middle">@someEvent.CreationDate</td>
@@ -30,17 +30,17 @@
                         <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
                             <div class="dropdown-divider m-0 p-0"></div>
                             @foreach (JsonProperty property in someEvent.JsonPropertiesMetaValue)
-                            {
+                             {
                                 <p class="dropdown-item-text m-0 disabled">@property.PropertyName</p>
                                 <div class="dropdown-divider m-0 p-0"></div>
-                            }
+                             }
                         </div>
                     </td>
                     <td class="w-25 ">
                         <button onclick="location.href='/Events/CreateEvent?eventKey=@someEvent.EventKey'" class="btn btn-outline-primary">Сгенерировать</button> @*Нужно сделать защиту, но не знаю как*@
                     </td>
                 </tr>
-            }
+             }
         </tbody>
     </table>
 }
