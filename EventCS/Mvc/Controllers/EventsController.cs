@@ -1,30 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using EventToMetaValueDeconstructor;
-using Microsoft.AspNetCore.Http;
+﻿using EventToMetaValueDeconstructor;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Mvc.Data.Repositories;
+using Mvc.Application;
 using Mvc.dto;
 using Mvc.ViewModels;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System;
 
 
 namespace Mvc.Controllers
-{    
+{
     public class EventsController : Controller
     {
         private readonly IEventRepository _eventRepository;
+
+        private readonly ErrorFormer _errorFormer = new ErrorFormer();
         public EventsController(IEventRepository eventRepository)
         {
             _eventRepository = eventRepository;
-        }        
+        }
         [HttpGet]
         public ViewResult EventsList()
         {
@@ -40,16 +33,12 @@ namespace Mvc.Controllers
             }
             catch (SqlException e)
             {
-                ErrorViewModel errorViewModel = new ErrorViewModel
-                {
-                    ErrorMessage = e.Message
-                };
-            return View("Error", errorViewModel);
-            }            
+                return View("Error", _errorFormer.Form(e.Message));
+            }
         }
         [HttpGet]
         public ViewResult CreationPage([FromQuery(Name = "eventKey")] string eventKey)
-        {            
+        {
             if (String.IsNullOrEmpty(eventKey))
             {
                 ErrorViewModel errorViewModel = new ErrorViewModel
@@ -82,11 +71,7 @@ namespace Mvc.Controllers
             }
             catch (SqlException e)
             {
-                ErrorViewModel errorViewModel = new ErrorViewModel
-                {
-                    ErrorMessage = e.Message
-                };
-                return View("Error", errorViewModel);
+                return View("Error", _errorFormer.Form(e.Message));
             }
         }
         [HttpPost]
@@ -94,6 +79,8 @@ namespace Mvc.Controllers
         {
             try
             {
+                JsonCreator jsonCreator = new JsonCreator();
+
                 if (String.IsNullOrEmpty(jsonInfo.EventKey))
                 {
                     ErrorViewModel errorViewModel = new ErrorViewModel
@@ -103,7 +90,7 @@ namespace Mvc.Controllers
                     return View("Error", errorViewModel);//error page
                 }
 
-                Event @eventToCreate = _eventRepository.GetEvent(jsonInfo.EventKey);
+                Event eventToCreate = _eventRepository.GetEvent(jsonInfo.EventKey);
 
                 if (String.IsNullOrEmpty(@eventToCreate.EventKey))
                 {
@@ -116,33 +103,14 @@ namespace Mvc.Controllers
 
                 Guid guid = Guid.NewGuid();
                 String idProperty = $"\"Id\":\"{guid}\"";
-                string json = "";
 
-                for (int i = 0; i < jsonInfo.Properties.Count(); i++)
-                {
-                    JsonProperty property = @eventToCreate.JsonPropertiesMetaValue[i];
-                    String propertyValue = jsonInfo.Properties[i];
-
-                    if (String.IsNullOrEmpty(propertyValue))
-                        json += $"\"{property.PropertyName}\": null, ";
-                    else
-                        if (property.PropertyType == PropertyType.String || property.PropertyType == PropertyType.DateTime)
-                        json += $"\"{property.PropertyName}\": \"{propertyValue}\", ";
-                    else
-                        json += $"\"{property.PropertyName}\": {propertyValue}, ";
-                }
-
-                String creationTime = GetCurrentUtcDate();
-                String dataProperty = $"\"Creation date\":\"{creationTime}\"";
-
-                json += $" {idProperty}, {dataProperty}}}";
-                json = json.Insert(0, "{");
+                String formedJson = jsonCreator.Create(jsonInfo, eventToCreate, idProperty);
 
                 CreationPageViewModel creationPageViewModel = new CreationPageViewModel
                 {
                     EventKey = eventToCreate.EventKey,
                     JsonPropertiesMetaValue = eventToCreate.JsonPropertiesMetaValue,
-                    CreatedJson = json,
+                    CreatedJson = formedJson,
                     EventId = guid.ToString(),
                     EnteredData = jsonInfo.Properties
                 };
@@ -151,78 +119,68 @@ namespace Mvc.Controllers
             }
             catch (SqlException e)
             {
-                ErrorViewModel errorViewModel = new ErrorViewModel
-                {
-                    ErrorMessage = e.Message
-                };
-                return View("Error", errorViewModel);
+                return View("Error", _errorFormer.Form(e.Message));
             }
-        }        
+        }
         [HttpGet]
-        public ViewResult AddEventsFromLog()
+        public ViewResult AddEvents()
         {
-            return View("AddEventsFromLog");
+            return View("AddEvents");
         }
         [HttpPost, DisableRequestSizeLimit]
-        public ViewResult AddEventsFromLog(String eventsToAdd)
+        public ViewResult AddEventsFromLog(string eventsToAdd)
         {
             try
             {
-                SubstringBetweenFlagsGetter substringGetter = new SubstringBetweenFlagsGetter();                
-                JsonEventParser jsonEventParser = new JsonEventParser();                
-
-                while (true)
-                {
-                    string eventFromLogKey = substringGetter.Get(eventsToAdd, "key:", ",");
-                    string jsonFromLog = substringGetter.Get(eventsToAdd, "json:", "\n");
-                    if ((String.IsNullOrEmpty(eventFromLogKey)) || (String.IsNullOrEmpty(jsonFromLog)))                    
-                        break;                    
-
-                    int startingKeyIndex = eventsToAdd.IndexOf("key:");
-                    int startingJsonIndex = eventsToAdd.IndexOf("json:");
-
-                    eventsToAdd = eventsToAdd.Remove(startingJsonIndex, jsonFromLog.Length);
-                    eventsToAdd = eventsToAdd.Remove(startingKeyIndex, eventFromLogKey.Length);
-
-                    Event newEvent = jsonEventParser.Parse(eventFromLogKey, jsonFromLog);
-                    Event comparableEvent = _eventRepository.GetEvent(eventFromLogKey);
-
-                    if (comparableEvent == null)
-                    {
-                        _eventRepository.Create(newEvent);
-                    }
-                    else
-                    {
-                        DateTime newEventCreationDate = DateTime.Parse(newEvent.CreationDate);
-                        DateTime eventCreationDate = DateTime.Parse(comparableEvent.CreationDate);
-                        if (newEventCreationDate > eventCreationDate)
-                            _eventRepository.Update(newEvent);
-                    }
-                }
+                HandleAddedEvents(eventsToAdd);
 
                 var Events = _eventRepository.GetAllEvents();
+
                 EventsListViewModel eventsViewModel = new EventsListViewModel
                 {
                     AllEvents = Events
-                };                
+                };
 
-                return View("EventsList", eventsViewModel);                
+                return View("EventsList", eventsViewModel);
             }
             catch (SqlException e)
             {
-                ErrorViewModel errorViewModel = new ErrorViewModel
-                {
-                    ErrorMessage = e.Message
-                };
-                
-                return View("Error", errorViewModel);
-            }                                                  
+                return View("Error", _errorFormer.Form(e.Message));
+            }
         }
-        private string GetCurrentUtcDate()
+        private void HandleAddedEvents(string eventsToAdd)
         {
-            DateTime date = DateTime.UtcNow;
-            String currentDate = date.ToString("O");
-            return currentDate;
+            SubstringBetweenFlagsGetter substringGetter = new SubstringBetweenFlagsGetter();
+            JsonEventParser jsonEventParser = new JsonEventParser();
+
+            while (true)
+            {
+                string eventFromLogKey = substringGetter.Get(eventsToAdd, "key:", ",");
+                string jsonFromLog = substringGetter.Get(eventsToAdd, "json:", "\n");
+                if ((String.IsNullOrEmpty(eventFromLogKey)) || (String.IsNullOrEmpty(jsonFromLog)))
+                    break;
+
+                int startingKeyIndex = eventsToAdd.IndexOf("key:");
+                int startingJsonIndex = eventsToAdd.IndexOf("json:");
+
+                eventsToAdd = eventsToAdd.Remove(startingJsonIndex, jsonFromLog.Length);
+                eventsToAdd = eventsToAdd.Remove(startingKeyIndex, eventFromLogKey.Length);
+
+                Event newEvent = jsonEventParser.Parse(eventFromLogKey, jsonFromLog);
+                Event comparableEvent = _eventRepository.GetEvent(eventFromLogKey);
+
+                if (comparableEvent == null)
+                {
+                    _eventRepository.Create(newEvent);
+                }
+                else
+                {
+                    DateTime newEventCreationDate = DateTime.Parse(newEvent.CreationDate);
+                    DateTime eventCreationDate = DateTime.Parse(comparableEvent.CreationDate);
+                    if (newEventCreationDate > eventCreationDate)
+                        _eventRepository.Update(newEvent);
+                }
+            }
         }
-    }    
+    }
 }
