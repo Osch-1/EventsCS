@@ -128,7 +128,7 @@ namespace Mvc.Controllers
             return View("AddEvents");
         }
         [HttpPost, DisableRequestSizeLimit]
-        public ViewResult AddEventsFromLog(string eventsToAdd)
+        public ViewResult AddProvidedEvents(string eventsToAdd)
         {
             try
             {
