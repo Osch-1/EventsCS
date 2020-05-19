@@ -66,6 +66,8 @@ namespace Mvc.Data.Repositories
                 string readedDate = Convert.ToString(reader["CreationDate"]);
                 readedEvent = new Event(readedKey, GetJsonProperties(readedKey), readedDate);
             }
+            else
+                readedEvent = null;
                         
             return readedEvent;
         }

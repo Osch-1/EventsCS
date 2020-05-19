@@ -8,14 +8,14 @@
         <fieldset>
             <div class="form-group">
                 @foreach (JsonProperty jsonProperty in Model.JsonPropertiesMetaValue)
-                {
+                 {
                     <label for="jsonInfo_Properties[@i]_Name" class="mt-1">@jsonProperty.PropertyName (@jsonProperty.PropertyType)</label>
                     <div class="row w-100">
                         <div class="col-sm-3">
                             @if ((jsonProperty.PropertyType == PropertyType.Object) || (jsonProperty.PropertyType == PropertyType.List))
-                            {
+                             {
                                 <textarea id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" class="textInput" rows="6" placeholder="Впишите значение сюда"></textarea>
-                            }
+                             }
                             else
                             {
                                 <input type="text" id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" class="form-control mb-2" placeholder="Впишите значение сюда" />
@@ -31,18 +31,18 @@
                         </div>
                     </div>
                     i = i + 1;
-                }
+                 }
             </div>
             <button type="submit" class="btn btn-success btn-lg mb-3">Сгенерировать json</button>
         </fieldset>
     </form>
     @if (!(String.IsNullOrEmpty(Model.CreatedJson)))
-    {
+     {
         <label for="CreatedJson" class="mt-1">Сгенерированный Json:</label>
-        <textarea id="CreatedJson" class="w-100">@Model.CreatedJson</textarea>
-        <label for="EventKey" class="mt-1">x-pro-event-type</label>
-        <textarea id="EventKey" class="w-100">@Model.EventKey:</textarea>
-        <label for="EventId" class="mt-1">x-pro-event-id</label>
-        <textarea id="EventId" class="w-100">@Model.EventId:</textarea>
-    }
+        <textarea id="CreatedJson" class="w-100" rows="1" disabled>@Model.CreatedJson</textarea>
+        <label for="EventKey" class="mt-1">x-pro-event-type:</label>
+        <textarea id="EventKey" class="w-100" rows="1" disabled>@Model.EventKey</textarea>
+        <label for="EventId" class="mt-1">x-pro-event-id:</label>
+        <textarea id="EventId" class="w-100" rows="1" disabled>@Model.EventId</textarea>
+     }
 }

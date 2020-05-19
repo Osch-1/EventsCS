@@ -1,16 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Mvc.Data.Repositories;
+using System;
 
 namespace Mvc
 {
@@ -29,7 +22,7 @@ namespace Mvc
             services.AddMvc();
 
             services.AddTransient<IEventRepository>(s => new SQLEventRepository(Configuration.GetConnectionString("LocalEventDb")));
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,10 +31,10 @@ namespace Mvc
         {
 
             app.UseDefaultFiles();
-            app.UseDeveloperExceptionPage();// ÷òîáû âèäåòü îøèáêè
-            app.UseStatusCodePages();// îòîáðàæàòü êîä çàïðîñà
-            app.UseStaticFiles();// îòîáðàæàòü css
-            app.UseRouting(); // èñïîëüçóåì ñèñòåìó ìàðøðóòèçàöèè
+            app.UseDeveloperExceptionPage();// Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð²Ð¸Ð´ÐµÑ‚ÑŒ Ð¾ÑˆÐ¸Ð±ÐºÐ¸
+            app.UseStatusCodePages();// Ð¾Ñ‚Ð¾Ð±Ñ€Ð°Ð¶Ð°Ñ‚ÑŒ ÐºÐ¾Ð´ Ð·Ð°Ð¿Ñ€Ð¾ÑÐ°
+            app.UseStaticFiles();// Ð¾Ñ‚Ð¾Ð±Ñ€Ð°Ð¶Ð°Ñ‚ÑŒ css
+            app.UseRouting(); // Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÐ¼ ÑÐ¸ÑÑ‚ÐµÐ¼Ñƒ Ð¼Ð°Ñ€ÑˆÑ€ÑƒÑ‚Ð¸Ð·Ð°Ñ†Ð¸Ð¸
 
             app.UseEndpoints(endpoints =>
             {

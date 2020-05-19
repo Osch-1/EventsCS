@@ -153,7 +153,7 @@ namespace Mvc.Controllers
         {
             return View("AddEventsFromLog");
         }
-        [HttpPost]
+        [HttpPost, DisableRequestSizeLimit]
         public ViewResult AddEventsFromLog(String eventsToAdd)
         {
             try
@@ -177,7 +177,7 @@ namespace Mvc.Controllers
                     Event newEvent = jsonEventParser.Parse(eventFromLogKey, jsonFromLog);
                     Event eventFromDb = _eventRepository.GetEvent(eventFromLogKey);                    
 
-                    if (eventFromDb.EventKey == "")
+                    if (eventFromDb == null)
                     {
                         _eventRepository.Create(newEvent);
                     }
