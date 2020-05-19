@@ -48,7 +48,7 @@ namespace Mvc.Controllers
             }            
         }
         [HttpGet]
-        public ViewResult CreateEvent([FromQuery(Name = "eventKey")] string eventKey)
+        public ViewResult CreationPage([FromQuery(Name = "eventKey")] string eventKey)
         {            
             if (String.IsNullOrEmpty(eventKey))
             {
@@ -72,13 +72,13 @@ namespace Mvc.Controllers
                     return View("Error", errorViewModel);//error page
                 }
 
-                CreateEventViewModel createEventViewModel = new CreateEventViewModel
+                CreationPageViewModel creationPageViewModel = new CreationPageViewModel
                 {
                     EventKey = @event.EventKey,
                     JsonPropertiesMetaValue = @event.JsonPropertiesMetaValue
                 };
 
-                return View("CreateEvent", createEventViewModel);
+                return View("CreationPage", creationPageViewModel);
             }
             catch (SqlException e)
             {
@@ -90,17 +90,26 @@ namespace Mvc.Controllers
             }
         }
         [HttpPost]
-        public ViewResult CreateEvent(JsonInfo jsonInfo, string eventKey)
+        public ViewResult CreateEvent(JsonInfo jsonInfo)
         {
             try
             {
-                Event @eventToCreate = _eventRepository.GetEvent(eventKey);
+                if (String.IsNullOrEmpty(jsonInfo.EventKey))
+                {
+                    ErrorViewModel errorViewModel = new ErrorViewModel
+                    {
+                        ErrorMessage = "Parameter eventKey can't be null or empty"
+                    };
+                    return View("Error", errorViewModel);//error page
+                }
+
+                Event @eventToCreate = _eventRepository.GetEvent(jsonInfo.EventKey);
 
                 if (String.IsNullOrEmpty(@eventToCreate.EventKey))
                 {
                     ErrorViewModel errorViewModel = new ErrorViewModel
                     {
-                        ErrorMessage = $"No such event \"{eventKey}\" was found"
+                        ErrorMessage = $"No such event \"{jsonInfo.EventKey}\" was found"
                     };
                     return View("Error", errorViewModel);//error page
                 }
@@ -128,16 +137,17 @@ namespace Mvc.Controllers
 
                 json += $" {idProperty}, {dataProperty}}}";
                 json = json.Insert(0, "{");
-                
-                CreateEventViewModel createEventViewModel = new CreateEventViewModel
+
+                CreationPageViewModel creationPageViewModel = new CreationPageViewModel
                 {
                     EventKey = eventToCreate.EventKey,
                     JsonPropertiesMetaValue = eventToCreate.JsonPropertiesMetaValue,
                     CreatedJson = json,
-                    EventId = guid.ToString()
+                    EventId = guid.ToString(),
+                    EnteredData = jsonInfo.Properties
                 };
 
-                return View("CreateEvent", createEventViewModel);
+                return View("CreationPage", creationPageViewModel);
             }
             catch (SqlException e)
             {
@@ -175,17 +185,17 @@ namespace Mvc.Controllers
                     eventsToAdd = eventsToAdd.Remove(startingKeyIndex, eventFromLogKey.Length);
 
                     Event newEvent = jsonEventParser.Parse(eventFromLogKey, jsonFromLog);
-                    Event eventFromDb = _eventRepository.GetEvent(eventFromLogKey);                    
+                    Event comparableEvent = _eventRepository.GetEvent(eventFromLogKey);
 
-                    if (eventFromDb == null)
+                    if (comparableEvent == null)
                     {
                         _eventRepository.Create(newEvent);
                     }
                     else
                     {
                         DateTime newEventCreationDate = DateTime.Parse(newEvent.CreationDate);
-                        DateTime eventFromDbCreationDate = DateTime.Parse(eventFromDb.CreationDate);
-                        if (newEventCreationDate > eventFromDbCreationDate)
+                        DateTime eventCreationDate = DateTime.Parse(comparableEvent.CreationDate);
+                        if (newEventCreationDate > eventCreationDate)
                             _eventRepository.Update(newEvent);
                     }
                 }
@@ -198,7 +208,7 @@ namespace Mvc.Controllers
 
                 return View("EventsList", eventsViewModel);                
             }
-            catch (Exception e)
+            catch (SqlException e)
             {
                 ErrorViewModel errorViewModel = new ErrorViewModel
                 {

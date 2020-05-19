@@ -1,0 +1,59 @@
+﻿@using EventToMetaValueDeconstructor
+@using Mvc.dto
+
+@{
+    int i = 0;    
+    <b>@Model.EventKey</b>
+    <form class="mt-4" action="/Events/CreateEvent" method="post">
+        <fieldset>
+            <div class="form-group">
+                <div class="row w-100">
+                    <div class="col-sm-8">
+                        <label for="jsonInfo_EventKey" class="mt-1">Создаваемое событие</label>
+                        <input type="text" class="form-control mb-2" id="jsonInfo_EventKey" name="jsonInfo.EventKey" Value="@Model.EventKey" readonly />
+                    </div>
+                 </div>
+                @foreach (JsonProperty jsonProperty in Model.JsonPropertiesMetaValue)
+                {
+                    String previousValue = "";
+                    <label for="jsonInfo_Properties[@i]_Name" class="mt-1">@jsonProperty.PropertyName (@jsonProperty.PropertyType)</label>
+                    <div class="row w-100">
+                        <div class="col-sm-3">
+                            @if (Model.EnteredData != null)
+                            {
+                                previousValue = Model.EnteredData[i];
+                            }
+                            @if ((jsonProperty.PropertyType == PropertyType.Object) || (jsonProperty.PropertyType == PropertyType.List))
+                            {
+                                <textarea class="textInput" id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" rows="6" placeholder="Впишите значение сюда">@previousValue</textarea>
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control mb-2" id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" value="@previousValue" placeholder="Впишите значение сюда" />
+                            }
+                        </div>
+                        <div class="col-sm-1">
+                            <a class="btn btn btn-primary" data-toggle="collapse" href="#sampleValue_@i" role="button" aria-expanded="false" aria-controls="sampleValue_@i">Пример</a>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="collapse multi-collapse" id="sampleValue_@i">
+                                <input type=text class="form-control mb-2" id="SampleValue[@i]" placeholder="Пример значения" value="@jsonProperty.SampleValue" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    i = i + 1;
+                }
+            </div>
+            <button type="submit" class="btn btn-success btn-lg mb-3">Сгенерировать json</button>
+        </fieldset>
+    </form>
+    @if (!(String.IsNullOrEmpty(Model.CreatedJson)))
+    {
+        <label for="CreatedJson" class="mt-1">Сгенерированный Json:</label>
+        <textarea id="CreatedJson" class="w-100" rows="1" disabled>@Model.CreatedJson</textarea>
+        <label for="CreatedEventKey" class="mt-1">x-pro-event-type:</label>
+        <textarea class="w-100" id="CreatedEventKey" rows="1" disabled>@Model.EventKey</textarea>
+        <label for="CreatedEventId" class="mt-1">x-pro-event-id:</label>
+        <textarea class="w-100" id="CreatedEventId" rows="1" disabled>@Model.EventId</textarea>
+    }
+}
