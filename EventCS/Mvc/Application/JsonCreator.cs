@@ -1,16 +1,14 @@
 ﻿using EventToMetaValueDeconstructor;
 using Mvc.dto;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Mvc.Application
 {
     public class JsonCreator
     {
         public string Create(JsonInfo jsonInfo, Event @eventToCreate, String idProperty)
-        {                        
+        {
             string json = "";
 
             for (int i = 0; i < jsonInfo.Properties.Count(); i++)

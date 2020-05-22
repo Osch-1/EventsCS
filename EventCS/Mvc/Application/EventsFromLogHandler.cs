@@ -1,15 +1,11 @@
 ﻿using EventToMetaValueDeconstructor;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Mvc.Application
 {
     public class EventsFromLogHandler
     {
-        private readonly IEventRepository _eventRepository;        
+        private readonly IEventRepository _eventRepository;
         public EventsFromLogHandler(IEventRepository eventRepository)
         {
             _eventRepository = eventRepository;
@@ -37,18 +33,16 @@ namespace Mvc.Application
                     Event newEvent = jsonEventParser.Parse(eventFromLogKey, jsonFromLog);
                     Event comparableEvent = _eventRepository.GetEvent(eventFromLogKey);
 
-
-
                     if (comparableEvent == null)
                     {
                         _eventRepository.Add(newEvent);
                     }
                     else
-                    {                        
+                    {
                         DateTime newEventCreationDate = newEvent.CreationDate;
                         DateTime eventCreationDate = comparableEvent.CreationDate;
 
-                        int isEventNewer = newEventCreationDate.CompareTo(eventCreationDate);                                             
+                        int isEventNewer = newEventCreationDate.CompareTo(eventCreationDate);
 
                         if (isEventNewer > 0)
                             _eventRepository.Update(newEvent);

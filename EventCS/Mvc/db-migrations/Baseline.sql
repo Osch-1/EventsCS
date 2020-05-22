@@ -12,3 +12,7 @@ CREATE TABLE [dbo].[EventPropertiesMetaValue]
 	[ValueType] nvarchar(300) NOT NULL,
 	[SampleValue] nvarchar(2000)
 )
+
+ALTER TABLE [dbo].[EventPropertiesMetaValue]
+  ADD CONSTRAINT FK_EventPropertiesMetaValue_Events
+    FOREIGN KEY(EventKey) REFERENCES [dbo].[Events](EventKey)

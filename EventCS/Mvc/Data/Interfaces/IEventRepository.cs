@@ -1,8 +1,5 @@
 ﻿using EventToMetaValueDeconstructor;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Mvc
 {
@@ -12,6 +9,6 @@ namespace Mvc
         Event GetEvent(string eventKey);
         void Add(Event eventToCreate);
         void Update(Event eventToUpdate);
-        void Delete(string eventtKey);        
+        void Delete(string eventtKey);
     }
 }

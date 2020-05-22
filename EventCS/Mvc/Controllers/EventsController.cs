@@ -4,15 +4,13 @@ using Microsoft.Data.SqlClient;
 using Mvc.Application;
 using Mvc.dto;
 using Mvc.ViewModels;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 
 namespace Mvc.Controllers
 {
     public class EventsController : Controller
     {
-        private readonly IEventRepository _eventRepository;        
+        private readonly IEventRepository _eventRepository;
         public EventsController(IEventRepository eventRepository)
         {
             _eventRepository = eventRepository;
@@ -39,7 +37,7 @@ namespace Mvc.Controllers
         public ViewResult CreationPage([FromQuery(Name = "eventKey")] string eventKey)
         {
             if (String.IsNullOrEmpty(eventKey))
-            {                
+            {
                 return CreateErrorView("Parameter eventKey can't be null or empty");//redirect to error page with provided message
             }
 
@@ -48,7 +46,7 @@ namespace Mvc.Controllers
                 var @event = _eventRepository.GetEvent(eventKey);
 
                 if (@event == null)
-                {                                        
+                {
                     return CreateErrorView($"No such event \"{eventKey}\" was found");//redirect to error page with provided message
                 }
 
@@ -81,7 +79,7 @@ namespace Mvc.Controllers
 
                 if (String.IsNullOrEmpty(@eventToCreate.EventKey))
                 {
-                    
+
                     return CreateErrorView($"No such event \"{jsonInfo.EventKey}\" was found");//redirect to error page with provided message
                 }
 
@@ -99,11 +97,11 @@ namespace Mvc.Controllers
                     EnteredData = jsonInfo.Properties
                 };
 
-                
+
                 return View("CreationPage", creationPageViewModel);
             }
             catch (SqlException e)
-            {                
+            {
                 return CreateErrorView(e.Message);//redirect to error page with provided message
             }
         }
@@ -127,21 +125,21 @@ namespace Mvc.Controllers
                 EventsListViewModel eventsViewModel = new EventsListViewModel
                 {
                     AllEvents = Events
-                };                
+                };
                 return View("EventsList", eventsViewModel);
             }
             catch (Exception e)
-            {                
+            {
                 return CreateErrorView(e.Message);
             }
         }
-        
+
 
         private ViewResult CreateErrorView(string message)//returns view with error message
         {
             ErrorViewModel errorViewModel = new ErrorViewModel
             {
-                ErrorMessage = message 
+                ErrorMessage = message
             };
 
             return View("Error", errorViewModel);
