@@ -8,27 +8,27 @@ namespace EventToMetaValueDeconstructor
     {        
         public string EventKey { get; set; }
         public List<JsonProperty> JsonPropertiesMetaValue { get; set; }
-        public string CreationDate { get; set; }
+        public DateTime CreationDate { get; set; }
         public Event()
         {
-            this.CreationDate = "";
+            this.CreationDate = DateTime.Now;
             this.EventKey = "";
             this.JsonPropertiesMetaValue = new List<JsonProperty>();
         }
         public Event(string key)
         {
-            this.CreationDate = "";
+            this.CreationDate = DateTime.Now;
             this.EventKey = key;
             this.JsonPropertiesMetaValue = new List<JsonProperty>();
         }
         public Event(string key, List<JsonProperty> listOfProperties)
         {
-            this.CreationDate = "";
+            this.CreationDate = DateTime.Now;
             this.EventKey = key;
             this.JsonPropertiesMetaValue = listOfProperties;
         }
 
-        public Event(string key, List<JsonProperty> listOfProperties, string creationDate)
+        public Event(string key, List<JsonProperty> listOfProperties, DateTime creationDate)
         {
             this.CreationDate = creationDate;
             this.EventKey = key;

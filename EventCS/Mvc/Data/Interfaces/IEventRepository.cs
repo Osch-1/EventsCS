@@ -10,7 +10,7 @@ namespace Mvc
     {
         List<Event> GetAllEvents();
         Event GetEvent(string eventKey);
-        void Create(Event eventToCreate);
+        void Add(Event eventToCreate);
         void Update(Event eventToUpdate);
         void Delete(string eventtKey);        
     }

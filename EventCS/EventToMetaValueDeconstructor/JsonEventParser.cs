@@ -7,14 +7,14 @@ namespace EventToMetaValueDeconstructor
 {
     public class JsonEventParser//deserializer 1x log Event => Event object
     {        
-        private JpropertyTypeDeterminator jpropertyTypeDeterminator = new JpropertyTypeDeterminator();
-        private List<String> propertiesToPass = new List<String>() { "CreationDate", "CorrelationId", "Id" };
+        private readonly JpropertyTypeDeterminator jpropertyTypeDeterminator = new JpropertyTypeDeterminator();
+        private readonly List<String> propertiesToPass = new List<String>() { "CreationDate", "CorrelationId", "Id" };
 
         public Event Parse(string eventKey, string Json)
         {
             if (Json == "")
                 return new Event();
-            string CreationDate = "";
+            DateTime CreationDate = DateTime.Now;
 
             JObject jObjectFromString = JObject.Parse(Json);            
             List<JsonProperty> listOfProperties = new List<JsonProperty>();
@@ -28,7 +28,7 @@ namespace EventToMetaValueDeconstructor
                     listOfProperties.Add(new JsonProperty(Property.Name, propertyType, propertyValue));                    
                 }
                 if (Property.Name == "CreationDate")
-                    CreationDate = Property.Value.ToString();
+                    CreationDate = Convert.ToDateTime(Property.Value);
             }
             return new Event(eventKey, listOfProperties, CreationDate);
         }

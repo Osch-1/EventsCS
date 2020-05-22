@@ -1,23 +1,18 @@
 ﻿using EventToMetaValueDeconstructor;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace Mvc.Data.Repositories
-{    
+{
     public class SQLEventRepository : IEventRepository
     {
         private readonly string _connectionString;
         public SQLEventRepository(string connectionString)
         {
             this._connectionString = connectionString;
-        }        
+        }
 
         public List<Event> GetAllEvents()
         {
@@ -32,24 +27,24 @@ namespace Mvc.Data.Repositories
                     [EventKey],                            
                     [CreationDate]                            
                     FROM Events";
-            
+
 
             using SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 string readedKey = Convert.ToString(reader["EventKey"]).Replace(" ", "");
-                string readedDate = Convert.ToString(reader["CreationDate"]);
+                DateTime readedDate = Convert.ToDateTime(reader["CreationDate"]);
 
                 var readedEvent = new Event(readedKey, GetJsonProperties(readedKey), readedDate);
-                
+
                 events.Add(readedEvent);
             }
             return events;
         }
-                
+
         public Event GetEvent(string eventKey)
-        {                                    
-            Event readedEvent = new Event();            
+        {
+            Event readedEvent = new Event();
             using SqlConnection connection = new SqlConnection(_connectionString);
             connection.Open();
             using SqlCommand command = connection.CreateCommand();
@@ -63,32 +58,32 @@ namespace Mvc.Data.Repositories
             if (reader.Read())
             {
                 string readedKey = Convert.ToString(reader["EventKey"]).Replace(" ", "");
-                string readedDate = Convert.ToString(reader["CreationDate"]);
+                DateTime readedDate = Convert.ToDateTime(reader["CreationDate"]);
                 readedEvent = new Event(readedKey, GetJsonProperties(readedKey), readedDate);
             }
             else
                 readedEvent = null;
-                        
+
             return readedEvent;
         }
-        public void Create(Event eventToCreate)
+        public void Add(Event eventToCreate)
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
             connection.Open();
             using SqlCommand command = connection.CreateCommand();
             command.Parameters.Add("@eventKey", SqlDbType.NVarChar).Value = eventToCreate.EventKey;
-            command.Parameters.Add("@creationDate", SqlDbType.NVarChar).Value = eventToCreate.CreationDate;
-            command.CommandText =            
+            command.Parameters.Add("@creationDate", SqlDbType.DateTime).Value = eventToCreate.CreationDate;
+            command.CommandText =
                 @"INSERT INTO [Events] ([EventKey], [CreationDate])
                   VALUES (@eventKey, @creationDate)";
             command.ExecuteNonQuery();
-            foreach (JsonProperty property in eventToCreate.JsonPropertiesMetaValue)            
-                PutJsonProperty(property, eventToCreate.EventKey);            
+            foreach (JsonProperty property in eventToCreate.JsonPropertiesMetaValue)
+                PutJsonProperty(property, eventToCreate.EventKey);
         }
         public void Update(Event eventToUpdate)//TODO: make it more productive with merge and join
         {
             Delete(eventToUpdate.EventKey);
-            Create(eventToUpdate);
+            Add(eventToUpdate);
         }
 
         public void Delete(string eventKey)

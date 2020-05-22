@@ -47,7 +47,7 @@ namespace Mvc.Controllers
             {
                 var @event = _eventRepository.GetEvent(eventKey);
 
-                if (String.IsNullOrEmpty(@event.EventKey))
+                if (@event == null)
                 {                                        
                     return CreateErrorView($"No such event \"{eventKey}\" was found");//redirect to error page with provided message
                 }
@@ -73,14 +73,15 @@ namespace Mvc.Controllers
                 JsonCreator jsonCreator = new JsonCreator();
 
                 if (String.IsNullOrEmpty(jsonInfo.EventKey))
-                {                    
+                {
                     return CreateErrorView("Parameter eventKey can't be null or empty");//redirect to error page with provided message
                 }
 
                 Event eventToCreate = _eventRepository.GetEvent(jsonInfo.EventKey);
 
                 if (String.IsNullOrEmpty(@eventToCreate.EventKey))
-                {                    
+                {
+                    
                     return CreateErrorView($"No such event \"{jsonInfo.EventKey}\" was found");//redirect to error page with provided message
                 }
 
@@ -98,10 +99,11 @@ namespace Mvc.Controllers
                     EnteredData = jsonInfo.Properties
                 };
 
+                
                 return View("CreationPage", creationPageViewModel);
             }
             catch (SqlException e)
-            {
+            {                
                 return CreateErrorView(e.Message);//redirect to error page with provided message
             }
         }

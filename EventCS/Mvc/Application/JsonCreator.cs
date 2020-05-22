@@ -28,7 +28,7 @@ namespace Mvc.Application
             }
 
             String creationTime = GetCurrentUtcDate();
-            String dataProperty = $"\"Creation date\":\"{creationTime}\"";
+            String dataProperty = $"\"CreationDate\":\"{creationTime}\"";
 
             json += $" {idProperty}, {dataProperty}}}";
             json = json.Insert(0, "{");
