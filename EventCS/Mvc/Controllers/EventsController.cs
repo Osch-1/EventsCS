@@ -4,16 +4,15 @@ using Microsoft.Data.SqlClient;
 using Mvc.Application;
 using Mvc.dto;
 using Mvc.ViewModels;
+using Newtonsoft.Json;
 using System;
-
+using System.Collections.Generic;
 
 namespace Mvc.Controllers
 {
     public class EventsController : Controller
     {
-        private readonly IEventRepository _eventRepository;
-
-        private readonly ErrorFormer _errorFormer = new ErrorFormer();
+        private readonly IEventRepository _eventRepository;        
         public EventsController(IEventRepository eventRepository)
         {
             _eventRepository = eventRepository;
@@ -33,19 +32,15 @@ namespace Mvc.Controllers
             }
             catch (SqlException e)
             {
-                return View("Error", _errorFormer.Form(e.Message));
+                return CreateErrorView(e.Message);//redirect to error page with provided message
             }
         }
         [HttpGet]
         public ViewResult CreationPage([FromQuery(Name = "eventKey")] string eventKey)
         {
             if (String.IsNullOrEmpty(eventKey))
-            {
-                ErrorViewModel errorViewModel = new ErrorViewModel
-                {
-                    ErrorMessage = "Parameter eventKey can't be null or empty"
-                };
-                return View("Error", errorViewModel);//error page
+            {                
+                return CreateErrorView("Parameter eventKey can't be null or empty");//redirect to error page with provided message
             }
 
             try
@@ -53,12 +48,8 @@ namespace Mvc.Controllers
                 var @event = _eventRepository.GetEvent(eventKey);
 
                 if (String.IsNullOrEmpty(@event.EventKey))
-                {
-                    ErrorViewModel errorViewModel = new ErrorViewModel
-                    {
-                        ErrorMessage = $"No such event \"{eventKey}\" was found"
-                    };
-                    return View("Error", errorViewModel);//error page
+                {                                        
+                    return CreateErrorView($"No such event \"{eventKey}\" was found");//redirect to error page with provided message
                 }
 
                 CreationPageViewModel creationPageViewModel = new CreationPageViewModel
@@ -71,7 +62,7 @@ namespace Mvc.Controllers
             }
             catch (SqlException e)
             {
-                return View("Error", _errorFormer.Form(e.Message));
+                return CreateErrorView(e.Message);//redirect to error page with provided message
             }
         }
         [HttpPost]
@@ -82,23 +73,15 @@ namespace Mvc.Controllers
                 JsonCreator jsonCreator = new JsonCreator();
 
                 if (String.IsNullOrEmpty(jsonInfo.EventKey))
-                {
-                    ErrorViewModel errorViewModel = new ErrorViewModel
-                    {
-                        ErrorMessage = "Parameter eventKey can't be null or empty"
-                    };
-                    return View("Error", errorViewModel);//error page
+                {                    
+                    return CreateErrorView("Parameter eventKey can't be null or empty");//redirect to error page with provided message
                 }
 
                 Event eventToCreate = _eventRepository.GetEvent(jsonInfo.EventKey);
 
                 if (String.IsNullOrEmpty(@eventToCreate.EventKey))
-                {
-                    ErrorViewModel errorViewModel = new ErrorViewModel
-                    {
-                        ErrorMessage = $"No such event \"{jsonInfo.EventKey}\" was found"
-                    };
-                    return View("Error", errorViewModel);//error page
+                {                    
+                    return CreateErrorView($"No such event \"{jsonInfo.EventKey}\" was found");//redirect to error page with provided message
                 }
 
                 Guid guid = Guid.NewGuid();
@@ -119,7 +102,7 @@ namespace Mvc.Controllers
             }
             catch (SqlException e)
             {
-                return View("Error", _errorFormer.Form(e.Message));
+                return CreateErrorView(e.Message);//redirect to error page with provided message
             }
         }
         [HttpGet]
@@ -132,55 +115,34 @@ namespace Mvc.Controllers
         {
             try
             {
-                HandleAddedEvents(eventsToAdd);
-
+                EventsFromLogHandler eventsFromLogHandler = new EventsFromLogHandler(_eventRepository);
+                if (!String.IsNullOrEmpty(eventsToAdd))
+                {
+                    eventsFromLogHandler.HandleAddedEvents(eventsToAdd);
+                }
                 var Events = _eventRepository.GetAllEvents();
 
                 EventsListViewModel eventsViewModel = new EventsListViewModel
                 {
                     AllEvents = Events
-                };
-
+                };                
                 return View("EventsList", eventsViewModel);
             }
-            catch (SqlException e)
-            {
-                return View("Error", _errorFormer.Form(e.Message));
+            catch (Exception e)
+            {                
+                return CreateErrorView(e.Message);
             }
         }
-        private void HandleAddedEvents(string eventsToAdd)
+        
+
+        private ViewResult CreateErrorView(string message)//returns view with error message
         {
-            SubstringBetweenFlagsGetter substringGetter = new SubstringBetweenFlagsGetter();
-            JsonEventParser jsonEventParser = new JsonEventParser();
-
-            while (true)
+            ErrorViewModel errorViewModel = new ErrorViewModel
             {
-                string eventFromLogKey = substringGetter.Get(eventsToAdd, "key:", ",");
-                string jsonFromLog = substringGetter.Get(eventsToAdd, "json:", "\n");
-                if ((String.IsNullOrEmpty(eventFromLogKey)) || (String.IsNullOrEmpty(jsonFromLog)))
-                    break;
+                ErrorMessage = message 
+            };
 
-                int startingKeyIndex = eventsToAdd.IndexOf("key:");
-                int startingJsonIndex = eventsToAdd.IndexOf("json:");
-
-                eventsToAdd = eventsToAdd.Remove(startingJsonIndex, jsonFromLog.Length);
-                eventsToAdd = eventsToAdd.Remove(startingKeyIndex, eventFromLogKey.Length);
-
-                Event newEvent = jsonEventParser.Parse(eventFromLogKey, jsonFromLog);
-                Event comparableEvent = _eventRepository.GetEvent(eventFromLogKey);
-
-                if (comparableEvent == null)
-                {
-                    _eventRepository.Create(newEvent);
-                }
-                else
-                {
-                    DateTime newEventCreationDate = DateTime.Parse(newEvent.CreationDate);
-                    DateTime eventCreationDate = DateTime.Parse(comparableEvent.CreationDate);
-                    if (newEventCreationDate > eventCreationDate)
-                        _eventRepository.Update(newEvent);
-                }
-            }
+            return View("Error", errorViewModel);
         }
     }
 }

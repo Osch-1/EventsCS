@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EventToMetaValueDeconstructor
 {
-    public class JsonEventParser
+    public class JsonEventParser//deserializer 1x log Event => Event object
     {        
         private JpropertyTypeDeterminator jpropertyTypeDeterminator = new JpropertyTypeDeterminator();
         private List<String> propertiesToPass = new List<String>() { "CreationDate", "CorrelationId", "Id" };

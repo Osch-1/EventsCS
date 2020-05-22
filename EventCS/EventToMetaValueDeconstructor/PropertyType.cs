@@ -1,4 +1,4 @@
-﻿public enum PropertyType
+﻿public enum PropertyType//enum для типов поля
 {
     String,
     Number,

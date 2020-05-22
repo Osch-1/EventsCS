@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EventToMetaValueDeconstructor
 {
-    public class JsonProperty
+    public class JsonProperty//одно поле json'а
     {
         public string PropertyName { get; set; }
         public PropertyType PropertyType { get; set; }

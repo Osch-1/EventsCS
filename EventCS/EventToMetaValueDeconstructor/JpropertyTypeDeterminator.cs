@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace EventToMetaValueDeconstructor
 {
-    public class JpropertyTypeDeterminator
+    public class JpropertyTypeDeterminator//распозглватель типа JSON поля
     {
         private bool IsNumber(string inputLine)
         {            

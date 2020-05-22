@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EventToMetaValueDeconstructor
 {
-    public class SubstringBetweenFlagsGetter: IGetSubstring
+    public class SubstringBetweenFlagsGetter: IGetSubstring//реализация интерфейса igetsubstring флагами
     {        
         public string Get(string inputLine, string propertyName, string endingFlag)
         {

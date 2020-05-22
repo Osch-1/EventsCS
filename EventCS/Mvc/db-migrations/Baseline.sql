@@ -10,5 +10,5 @@ CREATE TABLE [dbo].[EventPropertiesMetaValue]
 	[PropertyName] nvarchar(300) NOT NULL,
 	[EventKey] nvarchar(300) NOT NULL,
 	[ValueType] nvarchar(300) NOT NULL,
-	[SampleValue] nvarchar(1000)
+	[SampleValue] nvarchar(2000)
 )
