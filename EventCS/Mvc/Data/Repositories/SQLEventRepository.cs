@@ -39,6 +39,9 @@ namespace Mvc.Data.Repositories
 
                 events.Add(readedEvent);
             }
+
+            connection.Close();
+
             return events;
         }
 
@@ -64,6 +67,8 @@ namespace Mvc.Data.Repositories
             else
                 readedEvent = null;
 
+            connection.Close();
+
             return readedEvent;
         }
         public void Add(Event eventToCreate)
@@ -79,6 +84,8 @@ namespace Mvc.Data.Repositories
             command.ExecuteNonQuery();
             foreach (JsonProperty property in eventToCreate.JsonPropertiesMetaValue)
                 PutJsonProperty(property, eventToCreate.EventKey);
+
+            connection.Close();
         }
         public void Update(Event eventToUpdate)//TODO: make it more productive with merge and join
         {
@@ -102,6 +109,8 @@ namespace Mvc.Data.Repositories
                   DELETE FROM [Events]
                   WHERE [EventKey] = @eventKey";
             command.ExecuteNonQuery();
+
+            connection.Close();
         }
         private List<JsonProperty> GetJsonProperties(string eventKey)
         {
@@ -139,6 +148,9 @@ namespace Mvc.Data.Repositories
                 };
                 properties.Add(readedProperty);
             }
+
+            connection.Close();
+
             return properties;
         }
         private void PutJsonProperty(JsonProperty property, string eventKey)
@@ -156,6 +168,8 @@ namespace Mvc.Data.Repositories
                 @"INSERT INTO [EventPropertiesMetaValue] ([PropertyName], [EventKey], [ValueType], [SampleValue])
                   VALUES (@propertyName, @eventKey, @propertyType, @sampleValue)";
             command.ExecuteNonQuery();
+
+            connection.Close();
         }
     }
 }

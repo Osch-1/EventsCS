@@ -21,7 +21,7 @@ namespace Mvc.Controllers
             _eventsHandler = eventsHandler;
         }
         [HttpGet]
-        public ViewResult EventsList()
+        public ViewResult EventsList()//returns page with table
         {
             try
             {
@@ -39,7 +39,7 @@ namespace Mvc.Controllers
             }
         }
         [HttpGet]
-        public ViewResult CreationPage([FromQuery(Name = "eventKey")] string eventKey)
+        public ViewResult CreationPage([FromQuery(Name = "eventKey")] string eventKey)//returns creation page
         {
             if (String.IsNullOrEmpty(eventKey))
             {
@@ -69,7 +69,7 @@ namespace Mvc.Controllers
             }
         }
         [HttpPost]
-        public ViewResult CreateEvent(JsonInfo jsonInfo)
+        public ViewResult CreateEvent(JsonInfo jsonInfo)//returns creation page with json
         {
             try
             {
@@ -109,12 +109,12 @@ namespace Mvc.Controllers
             }
         }
         [HttpGet]
-        public ViewResult AddEvents()
+        public ViewResult AddEvents()//page with textarea to add events
         {
             return View("AddEvents");
         }
         [HttpPost, DisableRequestSizeLimit]
-        public ViewResult AddProvidedEvents(string eventsToAdd)
+        public ViewResult AddProvidedEvents(string eventsToAdd)//handle provided events
         {
             try
             {
@@ -135,8 +135,6 @@ namespace Mvc.Controllers
                 return CreateErrorView(e.Message);
             }
         }
-
-
         private ViewResult CreateErrorView(string message)//returns view with error message
         {
             ErrorViewModel errorViewModel = new ErrorViewModel

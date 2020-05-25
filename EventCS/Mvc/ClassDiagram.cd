@@ -1,55 +1,57 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Mvc.Application.LogEventsHandler" Collapsed="true">
-    <Position X="7.5" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAQAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
-      <FileName>Application\EventsHandler\LogEventsHandler.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="Mvc.Application.PlainJsonCreator" Collapsed="true">
-    <Position X="7.5" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAABAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
-      <FileName>Application\JsonCreator\PlainJsonCreator.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="Mvc.Controllers.EventsController" Collapsed="true">
-    <Position X="5" Y="3.75" Width="1.5" />
+    <Position X="5.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>EAIAQAAAAAAAJABAAAAAAAAAAAAAAAAAAIAAACQAAAA=</HashCode>
       <FileName>Controllers\EventsController.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="Mvc.Data.Repositories.SQLEventRepository" Collapsed="true">
-    <Position X="7.5" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAYAAAAAAAAAAABAAAAAAAIAAAEAAAAIAAAAAAAADAA=</HashCode>
-      <FileName>Data\Repositories\SQLEventRepository.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <ShowAsAssociation>
+      <Field Name="_eventRepository" />
+      <Field Name="_jsonCreator" />
+      <Field Name="_eventsHandler" />
+    </ShowAsAssociation>
   </Class>
   <Class Name="EventToMetaValueDeconstructor.JpropertyTypeDeterminator" Collapsed="true">
-    <Position X="2.5" Y="3" Width="1.5" />
+    <Position X="9.75" Y="2.25" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="EventToMetaValueDeconstructor.JsonEventParser" Collapsed="true">
-    <Position X="2.5" Y="4.5" Width="1.5" />
+    <Position X="11.5" Y="2.25" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="EventToMetaValueDeconstructor.SubstringBetweenFlagsGetter" Collapsed="true">
-    <Position X="2.5" Y="3.75" Width="1.5" />
+    <Position X="9.75" Y="3.25" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="EventToMetaValueDeconstructor.Event" Collapsed="true">
-    <Position X="2.5" Y="2.25" Width="1.5" />
+    <Position X="8" Y="2.25" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="EventToMetaValueDeconstructor.JsonProperty" Collapsed="true">
-    <Position X="2.5" Y="5.25" Width="1.5" />
+    <Position X="8" Y="3.25" Width="1.5" />
     <TypeIdentifier />
   </Class>
+  <Interface Name="Mvc.IEventRepository" Collapsed="true">
+    <Position X="2.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAADAA=</HashCode>
+      <FileName>Data\Interfaces\IEventRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Mvc.Application.EventsHandler.IEventsHandler" Collapsed="true">
+    <Position X="5.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Application\EventsHandler\IEventsHandler.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Mvc.Application.JsonCreator.IJsonCreator" Collapsed="true">
+    <Position X="5.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Application\JsonCreator\IJsonCreator.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
