@@ -6,7 +6,7 @@ CREATE TABLE [dbo].[Events]
 
 CREATE TABLE [dbo].[EventPropertiesMetaValue]
 (
-	[PropertyId] int IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	[Id] int IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	[PropertyName] nvarchar(300) NOT NULL,
 	[EventKey] nvarchar(300) NOT NULL,
 	[ValueType] nvarchar(300) NOT NULL,

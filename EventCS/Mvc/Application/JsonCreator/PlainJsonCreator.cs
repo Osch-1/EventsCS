@@ -1,11 +1,12 @@
 ﻿using EventToMetaValueDeconstructor;
+using Mvc.Application.JsonCreator;
 using Mvc.dto;
 using System;
 using System.Linq;
 
 namespace Mvc.Application
 {
-    public class JsonCreator
+    public class PlainJsonCreator : IJsonCreator
     {
         public string Create(JsonInfo jsonInfo, Event @eventToCreate, String idProperty)
         {

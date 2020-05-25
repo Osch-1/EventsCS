@@ -25,11 +25,11 @@
                             }
                             @if ((jsonProperty.PropertyType == PropertyType.Object) || (jsonProperty.PropertyType == PropertyType.List))
                             {
-                                <textarea class="textInput" id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" rows="6" placeholder="Впишите значение сюда">@previousValue</textarea>
+                                <textarea class="textInput" id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" rows="6" placeholder="Впишите значение сюда" required>@previousValue</textarea>
                             }
                             else
                             {
-                                <input type="text" class="form-control mb-2" id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" value="@previousValue" placeholder="Впишите значение сюда" />
+                                <input type="text" class="form-control mb-2" id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" value="@previousValue" placeholder="Впишите значение сюда" required />
                             }
                         </div>
                         <div class="col-sm-1">

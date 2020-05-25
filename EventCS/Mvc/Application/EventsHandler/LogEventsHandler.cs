@@ -1,16 +1,17 @@
 ﻿using EventToMetaValueDeconstructor;
+using Mvc.Application.EventsHandler;
 using System;
 
 namespace Mvc.Application
 {
-    public class EventsFromLogHandler
+    public class LogEventsHandler : IEventsHandler
     {
         private readonly IEventRepository _eventRepository;
-        public EventsFromLogHandler(IEventRepository eventRepository)
+        public LogEventsHandler(IEventRepository eventRepository)
         {
             _eventRepository = eventRepository;
         }
-        public void HandleAddedEvents(string eventsToAdd)//puts entered events from log file in db
+        public void Handle(string eventsToAdd)//puts entered events from log file in db
         {
             SubstringBetweenFlagsGetter substringGetter = new SubstringBetweenFlagsGetter();//substring getter
             JsonEventParser jsonEventParser = new JsonEventParser();//deserializer                        

@@ -97,9 +97,9 @@ namespace Mvc.Data.Repositories
 
             command.Parameters.Add("@eventKey", SqlDbType.NVarChar).Value = eventKey;
             command.CommandText =
-                @"DELETE FROM [Events]
+                @"DELETE FROM [EventPropertiesMetaValue]
                   WHERE [EventKey] = @eventKey
-                  DELETE FROM [EventPropertiesMetaValue]
+                  DELETE FROM [Events]
                   WHERE [EventKey] = @eventKey";
             command.ExecuteNonQuery();
         }

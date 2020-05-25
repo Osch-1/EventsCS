@@ -1,7 +1,8 @@
 ﻿using EventToMetaValueDeconstructor;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Mvc.Application;
+using Mvc.Application.EventsHandler;
+using Mvc.Application.JsonCreator;
 using Mvc.dto;
 using Mvc.ViewModels;
 using System;
@@ -11,9 +12,13 @@ namespace Mvc.Controllers
     public class EventsController : Controller
     {
         private readonly IEventRepository _eventRepository;
-        public EventsController(IEventRepository eventRepository)
+        private readonly IJsonCreator _jsonCreator;
+        private readonly IEventsHandler _eventsHandler;
+        public EventsController(IEventRepository eventRepository, IJsonCreator jsonCreator, IEventsHandler eventsHandler)
         {
             _eventRepository = eventRepository;
+            _jsonCreator = jsonCreator;
+            _eventsHandler = eventsHandler;
         }
         [HttpGet]
         public ViewResult EventsList()
@@ -68,8 +73,6 @@ namespace Mvc.Controllers
         {
             try
             {
-                JsonCreator jsonCreator = new JsonCreator();
-
                 if (String.IsNullOrEmpty(jsonInfo.EventKey))
                 {
                     return CreateErrorView("Parameter eventKey can't be null or empty");//redirect to error page with provided message
@@ -86,7 +89,7 @@ namespace Mvc.Controllers
                 Guid guid = Guid.NewGuid();
                 String idProperty = $"\"Id\":\"{guid}\"";
 
-                String formedJson = jsonCreator.Create(jsonInfo, eventToCreate, idProperty);
+                String formedJson = _jsonCreator.Create(jsonInfo, eventToCreate, idProperty);
 
                 CreationPageViewModel creationPageViewModel = new CreationPageViewModel
                 {
@@ -115,10 +118,9 @@ namespace Mvc.Controllers
         {
             try
             {
-                EventsFromLogHandler eventsFromLogHandler = new EventsFromLogHandler(_eventRepository);
                 if (!String.IsNullOrEmpty(eventsToAdd))
                 {
-                    eventsFromLogHandler.HandleAddedEvents(eventsToAdd);
+                    _eventsHandler.Handle(eventsToAdd);
                 }
                 var Events = _eventRepository.GetAllEvents();
 
