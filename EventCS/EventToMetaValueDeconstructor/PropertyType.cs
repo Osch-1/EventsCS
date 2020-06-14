@@ -1,8 +1,12 @@
-﻿public enum PropertyType//enum для типов поля
+﻿namespace EventToMetaValueDeconstructor
 {
-    String,
-    Number,
-    DateTime,
-    List,
-    Object
+    //enum для типов поля
+    public enum PropertyType
+    {
+        String,
+        Number,
+        DateTime,
+        List,
+        Object
+    }
 }

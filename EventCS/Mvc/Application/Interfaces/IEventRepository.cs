@@ -6,9 +6,9 @@ namespace Mvc
     public interface IEventRepository
     {
         List<Event> GetAllEvents();
-        Event GetEvent(string eventKey);
-        void Add(Event eventToCreate);
-        void Update(Event eventToUpdate);
-        void Delete(string eventtKey);
+        Event GetEvent( string eventKey );
+        void Add( Event eventToCreate );
+        void Update( Event eventToUpdate );
+        void Delete( string eventtKey );
     }
 }

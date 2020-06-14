@@ -4,7 +4,8 @@ using System.Text;
 
 namespace EventToMetaValueDeconstructor
 {
-    public class Event//объект, в который парсится событие
+    //метаинформация о событии
+    public class Event
     {        
         public string EventKey { get; set; }
         public List<JsonProperty> JsonPropertiesMetaValue { get; set; }
@@ -15,30 +16,16 @@ namespace EventToMetaValueDeconstructor
             this.EventKey = "";
             this.JsonPropertiesMetaValue = new List<JsonProperty>();
         }
-        public Event(string key)
-        {
-            this.CreationDate = DateTime.Now;
-            this.EventKey = key;
-            this.JsonPropertiesMetaValue = new List<JsonProperty>();
-        }
-        public Event(string key, List<JsonProperty> listOfProperties)
-        {
-            this.CreationDate = DateTime.Now;
-            this.EventKey = key;
-            this.JsonPropertiesMetaValue = listOfProperties;
-        }
-
-        public Event(string key, List<JsonProperty> listOfProperties, DateTime creationDate)
+        public Event( string key, List<JsonProperty> listOfProperties, DateTime creationDate )
         {
             this.CreationDate = creationDate;
             this.EventKey = key;
             this.JsonPropertiesMetaValue = listOfProperties;
         }
-
         public override string ToString()
         {
             string properties = "";
-            foreach (JsonProperty property in this.JsonPropertiesMetaValue)
+            foreach ( JsonProperty property in this.JsonPropertiesMetaValue )
             {
                 properties += "  " + property + "\n\n";
             }

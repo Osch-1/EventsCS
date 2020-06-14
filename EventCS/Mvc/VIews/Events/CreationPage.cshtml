@@ -9,27 +9,27 @@
             <div class="form-group">
                 <div class="row w-100">
                     <div class="col-sm-8">
-                        <label for="jsonInfo_EventKey" class="mt-1">Создаваемое событие</label>
-                        <input type="text" class="form-control mb-2" id="jsonInfo_EventKey" name="jsonInfo.EventKey" Value="@Model.EventKey" readonly />
+                        <label for="eventInfo_EventKey" class="mt-1">Создаваемое событие</label>
+                        <input type="text" class="form-control mb-2" id="eventInfo_EventKey" name="eventInfo.EventKey" Value="@Model.EventKey" readonly />
                     </div>
                  </div>
-                @foreach (JsonProperty jsonProperty in Model.JsonPropertiesMetaValue)
+                @foreach ( JsonProperty jsonProperty in Model.JsonPropertiesMetaValue )
                 {
                     String previousValue = "";
-                    <label for="jsonInfo_Properties[@i]_Name" class="mt-1">@jsonProperty.PropertyName (@jsonProperty.PropertyType)</label>
+                    <label for="eventInfo_EnteredPropertiesValue[@i]_Name" class="mt-1">@jsonProperty.PropertyName (@jsonProperty.PropertyType)</label>
                     <div class="row w-100">
                         <div class="col-sm-3">
-                            @if (Model.EnteredData != null)
+                            @if ( Model.EnteredData != null )
                             {
-                                previousValue = Model.EnteredData[i];
+                                previousValue = Model.EnteredData[ i ];
                             }
-                            @if ((jsonProperty.PropertyType == PropertyType.Object) || (jsonProperty.PropertyType == PropertyType.List))
+                            @if ( ( jsonProperty.PropertyType == PropertyType.Object ) || ( jsonProperty.PropertyType == PropertyType.List ) )
                             {
-                                <textarea class="textInput" id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" rows="6" placeholder="Впишите значение сюда" required>@previousValue</textarea>
+                                <textarea class="textInput" id="eventInfo_EnteredPropertiesValues[@i]" name="eventInfo.EnteredPropertiesValues[@i]" rows="6" placeholder="Впишите значение сюда" required>@previousValue</textarea>
                             }
                             else
                             {
-                                <input type="text" class="form-control mb-2" id="jsonInfo_Properties[@i]" name="jsonInfo.Properties[@i]" value="@previousValue" placeholder="Впишите значение сюда" required />
+                                <input type="text" class="form-control mb-2" id="eventInfo_EnteredPropertiesValues[@i]" name="eventInfo.EnteredPropertiesValues[@i]" value="@previousValue" placeholder="Впишите значение сюда" required />
                             }
                         </div>
                         <div class="col-sm-1">
@@ -37,14 +37,13 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="collapse multi-collapse" id="sampleValue_@i">
-                                @if ((jsonProperty.PropertyType == PropertyType.Object) || (jsonProperty.PropertyType == PropertyType.List))
+                                @if ( ( jsonProperty.PropertyType == PropertyType.Object ) || ( jsonProperty.PropertyType == PropertyType.List ) )
                                 {
                                     <textarea class="form-control mb-2" id="SampleValue[@i]" rows="6" disabled>@jsonProperty.SampleValue</textarea>
                                 }
                                 else
                                 {
-                                    <textarea class="form-control mb-2" id="SampleValue[@i]" rows="1" disabled>@jsonProperty.SampleValue</textarea>
-                                    
+                                    <textarea class="form-control mb-2" id="SampleValue[@i]" rows="1" disabled>@jsonProperty.SampleValue</textarea>                                    
                                 }
                             </div>
                         </div>

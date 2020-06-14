@@ -20,15 +20,15 @@ namespace Mvc
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices( IServiceCollection services )
         {
             services.AddMvc();
 
-            services.AddTransient<IEventRepository>(s => new SQLEventRepository(Configuration.GetConnectionString("LocalEventDb")));//введение зависимости, каждый раз при вызове IEventReopsitory будет обращение к SQLEventReopsitory
-            services.AddScoped<IJsonCreator, PlainJsonCreator>();
-            services.AddTransient<IEventsHandler>(s => new LogEventsHandler(new SQLEventRepository(Configuration.GetConnectionString("LocalEventDb"))));
+            services.AddTransient<IEventRepository>( s => new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) );//введение зависимости, каждый раз при вызове IEventReopsitory будет обращение к SQLEventReopsitory
+            services.AddScoped<IEventCreator, PlainEventCreator>();
+            services.AddTransient<IEventsManager>( s => new LogEventsManager( new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) ) );
 
-            services.Configure<FormOptions>(o =>
+            services.Configure<FormOptions>( o =>
             {
                 o.ValueLengthLimit = int.MaxValue;
                 o.MultipartBodyLengthLimit = int.MaxValue;
@@ -45,7 +45,7 @@ namespace Mvc
             app.UseStaticFiles();// отображать css
             app.UseRouting(); // используем систему маршрутизации
 
-            app.UseEndpoints(endpoints =>
+            app.UseEndpoints( endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
