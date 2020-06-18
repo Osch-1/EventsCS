@@ -124,10 +124,9 @@ namespace Mvc.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Error()
+        public ViewResult Error()
         {
-            return View(new ErrorViewModel
-                { ErrorMessage = "" });
+            return CreateErrorView("");
         }
 
         //возвращает страницу с ошибкой
