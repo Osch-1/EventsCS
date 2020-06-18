@@ -40,10 +40,10 @@ namespace Mvc
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseDeveloperExceptionPage();// чтобы видеть ошибки в процессе разработки
-            app.UseStatusCodePages();// отображать код запроса
+            app.UseExceptionHandler("/Events/Error");
+            app.UseHsts();
             app.UseStaticFiles();// отображать css
-            app.UseRouting(); // используем систему маршрутизации
+            app.UseRouting(); // используем систему маршрутизации                       
 
             app.UseEndpoints( endpoints =>
             {

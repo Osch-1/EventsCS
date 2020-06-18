@@ -1,4 +1,5 @@
 ﻿using EventToMetaValueDeconstructor;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Mvc.Application.EventsHandler;
@@ -20,26 +21,20 @@ namespace Mvc.Controllers
             _jsonCreator = jsonCreator;
             _eventsHandler = eventsHandler;
         }
+
         [HttpGet]
         //возврашает страницу с таблицей
         public ViewResult EventsList()
         {
-            try
+            
+            var Events = _eventRepository.GetAllEvents();
+            EventsListViewModel eventsViewModel = new EventsListViewModel
             {
-                var Events = _eventRepository.GetAllEvents();
-                EventsListViewModel eventsViewModel = new EventsListViewModel
-                {
-                    AllEvents = Events
-                };
-
-                return View( eventsViewModel );
-            }
-            catch ( SqlException )
-            {
-                //переход на страницу с ошибкой
-                return CreateErrorView("Что-то пошло не так");
-            }
+                AllEvents = Events
+            };
+            return View( eventsViewModel );            
         }
+
         [HttpGet]
         //возвращает страницу создания
         public ViewResult CreationPage( [FromQuery(Name = "eventKey")] string eventKey )
@@ -49,104 +44,92 @@ namespace Mvc.Controllers
                 //переход на страницу с ошибкой
                 return CreateErrorView( "Parameter eventKey can't be null or empty" );
             }
+            
+            var @event = _eventRepository.GetEvent( eventKey );
 
-            try
-            {
-                var @event = _eventRepository.GetEvent( eventKey );
-
-                if ( @event == null )
-                {
-                    //переход на страницу с ошибкой
-                    return CreateErrorView( $"No such event \"{eventKey}\" was found" );
-                }
-
-                CreationPageViewModel creationPageViewModel = new CreationPageViewModel
-                {
-                    EventKey = @event.EventKey,
-                    JsonPropertiesMetaValue = @event.JsonPropertiesMetaValue
-                };
-
-                return View( "CreationPage", creationPageViewModel );
-            }
-            catch ( SqlException )
+            if ( @event == null )
             {
                 //переход на страницу с ошибкой
-                return CreateErrorView( "Что-то пошло не так" );
+                return CreateErrorView( $"No such event \"{eventKey}\" was found" );
             }
+
+            CreationPageViewModel creationPageViewModel = new CreationPageViewModel
+            {
+                EventKey = @event.EventKey,
+                JsonPropertiesMetaValue = @event.JsonPropertiesMetaValue
+            };
+
+            return View( "CreationPage", creationPageViewModel );            
         }
+
         [HttpPost]
         //страница создания с уже сгенерированным событием
         public ViewResult CreateEvent( EventInfo eventInfo )
         {
-            try
-            {
-                if ( String.IsNullOrEmpty( eventInfo.EventKey ) )
-                {
-                    //переход на страницу с ошибкой
-                    return CreateErrorView( "Parameter eventKey can't be null or empty" );
-                }
-
-                Event eventToCreate = _eventRepository.GetEvent( eventInfo.EventKey );
-
-                if ( String.IsNullOrEmpty( @eventToCreate.EventKey ) )
-                {
-                    //переход на страницу с ошибкой
-                    return CreateErrorView( $"No such event \"{eventInfo.EventKey}\" was found" );
-                }
-
-                Guid guid = Guid.NewGuid();
-                String idProperty = $"\"Id\":\"{guid}\"";
-
-                String formedJson = _jsonCreator.SerializeEvent( eventInfo, eventToCreate, idProperty );
-
-                CreationPageViewModel creationPageViewModel = new CreationPageViewModel
-                {
-                    EventKey = eventToCreate.EventKey,
-                    JsonPropertiesMetaValue = eventToCreate.JsonPropertiesMetaValue,
-                    CreatedJson = formedJson,
-                    EventId = guid.ToString(),
-                    EnteredPropertiesValues = eventInfo.EnteredPropertiesValues
-                };
-
-
-                return View( "CreationPage", creationPageViewModel );
-            }
-            catch (SqlException)
+            
+            if ( String.IsNullOrEmpty( eventInfo.EventKey ) )
             {
                 //переход на страницу с ошибкой
-                return CreateErrorView( "Что-то пошло не так" );
+                return CreateErrorView( "Parameter eventKey can't be null or empty" );
             }
+
+            Event eventToCreate = _eventRepository.GetEvent( eventInfo.EventKey );
+
+            if ( String.IsNullOrEmpty( @eventToCreate.EventKey ) )
+            {
+                //переход на страницу с ошибкой
+                return CreateErrorView( $"No such event \"{eventInfo.EventKey}\" was found" );
+            }
+
+            Guid guid = Guid.NewGuid();
+            String idProperty = $"\"Id\":\"{guid}\"";
+
+            String formedJson = _jsonCreator.SerializeEvent( eventInfo, eventToCreate, idProperty );
+
+            CreationPageViewModel creationPageViewModel = new CreationPageViewModel
+            {
+                EventKey = eventToCreate.EventKey,
+                JsonPropertiesMetaValue = eventToCreate.JsonPropertiesMetaValue,
+                CreatedJson = formedJson,
+                EventId = guid.ToString(),
+                EnteredPropertiesValues = eventInfo.EnteredPropertiesValues
+            };
+
+
+            return View( "CreationPage", creationPageViewModel );            
         }
+
         [HttpGet]
         //страница добавления событий из логов
         public ViewResult AddEvents()
         {
             return View( "AddEvents" );
         }
+
         [HttpPost, DisableRequestSizeLimit]
         //обрабатываем полученные из логов событий
         public ViewResult AddProvidedEvents( string eventsToAdd )
-        {
-            try
+        {                        
+            if ( !String.IsNullOrEmpty( eventsToAdd ) )
             {
-                if ( !String.IsNullOrEmpty( eventsToAdd ) )
-                {
-                    _eventsHandler.Add( _eventsHandler.Parse( eventsToAdd ) );
-                }
-                var Events = _eventRepository.GetAllEvents();
+                _eventsHandler.Add( _eventsHandler.Parse( eventsToAdd ) );
+            }
+            var Events = _eventRepository.GetAllEvents();
 
-                EventsListViewModel eventsViewModel = new EventsListViewModel
-                {
-                    AllEvents = Events
-                };
-                return View( "EventsList", eventsViewModel );
-            }
-            //переход на страницу с ошибкой
-            catch ( Exception e )
+            EventsListViewModel eventsViewModel = new EventsListViewModel
             {
-                return CreateErrorView( "Что-то пошло не так" );
-            }
+                AllEvents = Events
+            };
+            return View( "EventsList", eventsViewModel );                        
         }
+
+        [AllowAnonymous]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel
+                { ErrorMessage = "" });
+        }
+
         //возвращает страницу с ошибкой
         private ViewResult CreateErrorView( string message )
         {
