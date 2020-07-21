@@ -19,9 +19,9 @@
                     <label for="eventInfo_EnteredPropertiesValue[@i]_Name" class="mt-1">@jsonProperty.PropertyName (@jsonProperty.PropertyType)</label>
                     <div class="row w-100">
                         <div class="col-sm-3">
-                            @if ( Model.EnteredData != null )
+                            @if ( !( Model.EnteredPropertiesValues == null ) )
                             {
-                                previousValue = Model.EnteredData[ i ];
+                                previousValue = Model.EnteredPropertiesValues[ i ];
                             }
                             @if ( ( jsonProperty.PropertyType == PropertyType.Object ) || ( jsonProperty.PropertyType == PropertyType.List ) )
                             {

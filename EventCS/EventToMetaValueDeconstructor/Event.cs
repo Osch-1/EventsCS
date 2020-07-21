@@ -12,15 +12,15 @@ namespace EventToMetaValueDeconstructor
         public DateTime CreationDate { get; set; }
         public Event()
         {
-            this.CreationDate = DateTime.Now;
-            this.EventKey = "";
-            this.JsonPropertiesMetaValue = new List<JsonProperty>();
+            CreationDate = DateTime.Now;
+            EventKey = "";
+            JsonPropertiesMetaValue = new List<JsonProperty>();
         }
         public Event( string key, List<JsonProperty> listOfProperties, DateTime creationDate )
         {
-            this.CreationDate = creationDate;
-            this.EventKey = key;
-            this.JsonPropertiesMetaValue = listOfProperties;
+            CreationDate = creationDate;
+            EventKey = key;
+            JsonPropertiesMetaValue = listOfProperties;
         }
         public override string ToString()
         {
@@ -29,7 +29,7 @@ namespace EventToMetaValueDeconstructor
             {
                 properties += "  " + property + "\n\n";
             }
-            return "EventKey:\n" + "  " + this.EventKey + "\n" + "CreationDate:\n" + "  " + this.CreationDate + "\n" + "JsonPropertiesMetaValue:\n" + properties;
+            return "EventKey:\n" + "  " + EventKey + "\n" + "CreationDate:\n" + "  " + CreationDate + "\n" + "JsonPropertiesMetaValue:\n" + properties;
         }
     }
 }

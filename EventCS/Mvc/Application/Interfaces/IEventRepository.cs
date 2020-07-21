@@ -1,7 +1,7 @@
 ﻿using EventToMetaValueDeconstructor;
 using System.Collections.Generic;
 
-namespace Mvc
+namespace Mvc.Application.Interfaces
 {
     public interface IEventRepository
     {

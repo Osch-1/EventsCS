@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -11,29 +12,42 @@ namespace EventToMetaValueDeconstructor
         private readonly JpropertyTypeDeterminator jpropertyTypeDeterminator = new JpropertyTypeDeterminator();
         private readonly List<String> propertiesToPass = new List<String>() { "CreationDate", "CorrelationId", "Id" };
 
-        public Event Parse( string eventKey, string Json )
+        public Event Parse( string eventKey, string json )
         {
-            if ( Json == "" )
+            if ( ( json == "" ) | ( !( IsJson(json) ) ) )
                 return new Event();
 
-            DateTime CreationDate = DateTime.Now;
+            DateTime creationDate = DateTime.Now;
 
-            JObject jObjectFromString = JObject.Parse( Json );
+            JObject jObjectFromString = JObject.Parse( json );
             List<JsonProperty> listOfProperties = new List<JsonProperty>();
 
-            foreach ( JProperty Property in jObjectFromString.Properties() )
+            foreach ( JProperty property in jObjectFromString.Properties() )
             {
-                if ( !( propertiesToPass.Contains( Property.Name ) ) )
+                if ( !( propertiesToPass.Contains( property.Name ) ) )
                 {
-                    PropertyType propertyType = jpropertyTypeDeterminator.Get( Property.Value.ToString() );
-                    string propertyValue = Property.Value.ToString();
+                    PropertyType propertyType = jpropertyTypeDeterminator.Get( property.Value.ToString() );
+                    string propertyValue = property.Value.ToString();
                     propertyValue = Regex.Replace( propertyValue, @"[ \r\n\t]", "" );
-                    listOfProperties.Add( new JsonProperty( Property.Name, propertyType, propertyValue ) );
+                    listOfProperties.Add( new JsonProperty( property.Name, propertyType, propertyValue ) );
                 }
-                if ( Property.Name == "CreationDate" )
-                    CreationDate = Convert.ToDateTime( Property.Value );
+                if ( property.Name == "CreationDate" )
+                    creationDate = Convert.ToDateTime( property.Value );
             }
-            return new Event( eventKey, listOfProperties, CreationDate );
+            return new Event( eventKey, listOfProperties, creationDate );
+        }
+
+        private bool IsJson( string providedString )
+        {
+            try
+            {
+                JObject.Parse(providedString);
+                return true;
+            }
+            catch (JsonReaderException)
+            {
+                return false;
+            }
         }
     }
 }

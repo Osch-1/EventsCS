@@ -1,15 +1,16 @@
 ﻿using EventToMetaValueDeconstructor;
 using Mvc.Application.EventsHandler;
+using Mvc.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 
 namespace Mvc.Application
 {
-    public class LogEventsManager : IEventsManager
+    public class EventsManager : IEventsManager
     {
         private readonly IEventRepository _eventRepository;
         const int MaxAllowedJsonLength = 1000;
-        public LogEventsManager( IEventRepository eventRepository )
+        public EventsManager( IEventRepository eventRepository )
         {
             _eventRepository = eventRepository;
         }

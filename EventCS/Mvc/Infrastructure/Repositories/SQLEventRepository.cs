@@ -1,5 +1,6 @@
 ﻿using EventToMetaValueDeconstructor;
 using Microsoft.Data.SqlClient;
+using Mvc.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,7 +12,7 @@ namespace Mvc.Data.Repositories
         private readonly string _connectionString;
         public SQLEventRepository( string connectionString )
         {
-            this._connectionString = connectionString;
+            _connectionString = connectionString;
         }
 
         public List<Event> GetAllEvents()
@@ -168,6 +169,7 @@ namespace Mvc.Data.Repositories
             command.CommandText =
                 @"INSERT INTO [EventPropertiesMetaValue] ([PropertyName], [EventKey], [ValueType], [SampleValue])
                   VALUES (@propertyName, @eventKey, @propertyType, @sampleValue)";
+
             command.ExecuteNonQuery();
 
             connection.Close();

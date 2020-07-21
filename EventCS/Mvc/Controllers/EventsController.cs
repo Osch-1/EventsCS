@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Mvc.Application.EventsHandler;
+using Mvc.Application.Interfaces;
 using Mvc.Application.JsonCreator;
 using Mvc.dto;
 using Mvc.ViewModels;
@@ -15,19 +16,23 @@ namespace Mvc.Controllers
         private readonly IEventRepository _eventRepository;
         private readonly IEventCreator _jsonCreator;
         private readonly IEventsManager _eventsHandler;
-        public EventsController( IEventRepository eventRepository, IEventCreator jsonCreator, IEventsManager eventsHandler )
+        private readonly IEventsReceiver _messagesReceiver;
+        public EventsController( IEventRepository eventRepository, IEventCreator jsonCreator, IEventsManager eventsHandler, IEventsReceiver messagesReceiver)
         {
             _eventRepository = eventRepository;
             _jsonCreator = jsonCreator;
             _eventsHandler = eventsHandler;
+            _messagesReceiver = messagesReceiver;
         }
 
         [HttpGet]
         //возврашает страницу с таблицей
         public ViewResult EventsList()
         {
+            _messagesReceiver.Receive();
             
             var Events = _eventRepository.GetAllEvents();
+
             EventsListViewModel eventsViewModel = new EventsListViewModel
             {
                 AllEvents = Events
@@ -139,5 +144,6 @@ namespace Mvc.Controllers
 
             return View( "Error", errorViewModel );
         }
+        
     }
 }

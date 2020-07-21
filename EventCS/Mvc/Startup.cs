@@ -5,8 +5,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mvc.Application;
 using Mvc.Application.EventsHandler;
+using Mvc.Application.Interfaces;
 using Mvc.Application.JsonCreator;
 using Mvc.Data.Repositories;
+using Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Mvc
 {
@@ -26,7 +33,19 @@ namespace Mvc
 
             services.AddTransient<IEventRepository>( s => new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) );//введение зависимости, каждый раз при вызове IEventReopsitory будет обращение к SQLEventReopsitory
             services.AddScoped<IEventCreator, PlainEventCreator>();
-            services.AddTransient<IEventsManager>( s => new LogEventsManager( new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) ) );
+            services.AddTransient<IEventsManager>( s => new EventsManager( new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) ) );
+
+            JToken jAppSettings = JToken.Parse( File.ReadAllText( Path.Combine( Environment.CurrentDirectory, "appsettings.json" ) ) );            
+            var rabbitMQEventBusSettings = new RabbitMQEventBusSettings
+            {
+                Service = jAppSettings["RabbitMQEventBusSettings"]["Service"].ToString(),
+                RetryMessageProcessingSettings = JsonConvert.DeserializeObject<RetryMessageProcessingSettings>( jAppSettings["RabbitMQEventBusSettings"]["RetryMessageProcessingSettings"].ToString() ),
+                ConnectionSettings = JsonConvert.DeserializeObject<RabbitMQConnectionSettings>( jAppSettings["RabbitMQEventBusSettings"]["ConnectionSettings"].ToString() )
+            };
+            var connectionSettings = rabbitMQEventBusSettings.ConnectionSettings;
+
+            services.AddTransient<IRabbitMQPersistentConnection>( s => new RabbitMQPersistentConnection( RabbitMQPersistentConnection.CreateConnectionFactory( connectionSettings ), rabbitMQEventBusSettings ) );
+            services.AddScoped<IEventsReceiver, RabbitEventsReceiver>();
 
             services.Configure<FormOptions>( o =>
             {
@@ -40,10 +59,11 @@ namespace Mvc
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseExceptionHandler("/Events/Error");
-            app.UseHsts();
+            //app.UseExceptionHandler("/Events/Error");
+            //app.UseHsts();
             app.UseStaticFiles();// отображать css
-            app.UseRouting(); // используем систему маршрутизации                       
+            app.UseRouting(); // используем систему маршрутизации    
+            app.UseStatusCodePages();
 
             app.UseEndpoints( endpoints =>
             {

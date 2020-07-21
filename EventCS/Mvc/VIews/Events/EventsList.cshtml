@@ -18,7 +18,7 @@
                 <th scope="col">Поля события</th>
                 <th scope="col"></th>
             </tr>
-        </thead>
+        </thead>        
         <tbody class="table_body">
             @foreach (Event someEvent in Model.AllEvents)
              {
@@ -27,13 +27,13 @@
                     <td class="w-25 align-middle">@someEvent.CreationDate</td>
                     <td class="w-25">
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Все поля</button>
-                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
+                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">                            
                             <div class="dropdown-divider m-0 p-0"></div>
                             @foreach (JsonProperty property in someEvent.JsonPropertiesMetaValue)
-                             {
+                            {
                                 <p class="dropdown-item-text m-0 disabled">@property.PropertyName</p>
                                 <div class="dropdown-divider m-0 p-0"></div>
-                             }
+                            }
                         </div>
                     </td>
                     <td class="w-25 ">
