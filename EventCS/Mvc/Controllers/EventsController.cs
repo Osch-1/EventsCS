@@ -15,22 +15,18 @@ namespace Mvc.Controllers
     {
         private readonly IEventRepository _eventRepository;
         private readonly IEventCreator _jsonCreator;
-        private readonly IEventsManager _eventsHandler;
-        private readonly IEventsReceiver _messagesReceiver;
-        public EventsController( IEventRepository eventRepository, IEventCreator jsonCreator, IEventsManager eventsHandler, IEventsReceiver messagesReceiver)
+        private readonly IEventsManager _eventsHandler;        
+        public EventsController( IEventRepository eventRepository, IEventCreator jsonCreator, IEventsManager eventsHandler )
         {
             _eventRepository = eventRepository;
             _jsonCreator = jsonCreator;
-            _eventsHandler = eventsHandler;
-            _messagesReceiver = messagesReceiver;
+            _eventsHandler = eventsHandler;            
         }
 
         [HttpGet]
         //возврашает страницу с таблицей
         public ViewResult EventsList()
-        {
-            _messagesReceiver.Receive();
-            
+        {                        
             var Events = _eventRepository.GetAllEvents();
 
             EventsListViewModel eventsViewModel = new EventsListViewModel

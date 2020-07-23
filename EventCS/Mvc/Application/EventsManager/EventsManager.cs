@@ -65,8 +65,10 @@ namespace Mvc.Application
                     
                     bool isParsedNewer = newEventCreationDate.CompareTo(eventCreationDate) > 0;
 
-                    if ( isParsedNewer )
-                        _eventRepository.Update( parsedEvent );
+                    if (isParsedNewer)
+                    {
+                        _eventRepository.Update(parsedEvent);
+                    }
                 }
             }
         }        
