@@ -63,11 +63,11 @@ namespace Mvc.Application
                     DateTime newEventCreationDate = parsedEvent.CreationDate;
                     DateTime eventCreationDate = existingEvent.CreationDate;
                     
-                    bool isParsedNewer = newEventCreationDate.CompareTo(eventCreationDate) > 0;
+                    bool isParsedNewer = newEventCreationDate.CompareTo( eventCreationDate ) > 0;
 
                     if (isParsedNewer)
                     {
-                        _eventRepository.Update(parsedEvent);
+                        _eventRepository.Update( parsedEvent );
                     }
                 }
             }

@@ -11,6 +11,7 @@ using Mvc.Data.Repositories;
 using Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,8 +34,13 @@ namespace Mvc
 
             //Configs
             services.AddTransient<IEventRepository>( s => new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) );
-            services.AddTransient<IEventsManager>( s => new LogEventsManager( new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) ) );            
-            services.AddSingleton<IRabbitMQPersistentConnection>( s => new RabbitMQPersistentConnection( RabbitMQPersistentConnection.CreateConnectionFactory( Configuration.GetSection("RabbitMQEventBusSettings:ConnectionSettings").Get<RabbitMQConnectionSettings>() ), Configuration.GetSection( "RabbitMQEventBusSettings" ).Get<RabbitMQEventBusSettings>() ) );
+            services.AddTransient<IEventsManager>( s => new LogEventsManager( new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) ) );
+            services.AddSingleton( Configuration.GetSection( "RabbitMQEventBusSettings" ).Get<RabbitMQEventBusSettings>() );
+            services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
+            {
+                return RabbitMQPersistentConnection.CreateConnectionFactory( sp.GetService<RabbitMQEventBusSettings>().ConnectionSettings );
+            });
+            services.AddSingleton<IRabbitMQPersistentConnection, RabbitMQPersistentConnection>();
 
             services.AddSingleton<IEventsReceiver, RabbitEventsReceiver>();
             services.AddScoped<IEventCreator, PlainEventCreator>();
@@ -58,8 +64,7 @@ namespace Mvc
             app.UseRouting(); // используем систему маршрутизации    
             app.UseStatusCodePages();
 
-            var eventsReceiver = app.ApplicationServices.GetService<IEventsReceiver>();
-            eventsReceiver.Bind();
+            var eventsReceiver = app.ApplicationServices.GetService<IEventsReceiver>();            
             eventsReceiver.Receive();
 
             app.UseEndpoints( endpoints =>

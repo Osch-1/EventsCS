@@ -27,7 +27,7 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
             _serviceProvider = serviceProvider;
         }
 
-        public void Bind()
+        private void Bind()
         {
             if (_rabbitMQPersistentConnection.TryConnect())
             {
@@ -43,9 +43,10 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
             }
         }
         public void Receive()
-        {                                  
+        {
+            Bind();
             if ( _rabbitMQPersistentConnection.TryConnect() )
-            {
+            {                
                 _consumerChannel.QueueBind(queue: _queueName,
                                                 exchange: _exchangeName,
                                                 routingKey: "#");
@@ -58,7 +59,7 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
                 consumer.Received += ParseEventOnHandle;
                 
             }                            
-        }        
+        }
         private void ParseEventOnHandle( object model, BasicDeliverEventArgs ea )
         {
             var body = ea.Body.ToArray();
@@ -70,9 +71,23 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
                 IEventRepository eventRepository = scope.ServiceProvider.GetService<IEventRepository>();
 
                 Event parsedEvent = jsonEventParser.Parse( routingKey, message );
-                if ( !( parsedEvent.JsonPropertiesMetaValue == null ) )
+
+                string eventFromLogKey = parsedEvent.EventKey;
+                Event existingEvent = eventRepository.GetEvent(eventFromLogKey);
+                bool doesEventExists = false;
+
+                if (existingEvent != null)
+                {
+                    doesEventExists = true;
+                }                
+
+                if ( ( parsedEvent.JsonPropertiesMetaValue != null ) &  ( !doesEventExists ) )
                 {
                     eventRepository.Add( parsedEvent );
+                } 
+                else if ( doesEventExists )
+                {
+                    eventRepository.Update( parsedEvent );
                 }
             }
         }
