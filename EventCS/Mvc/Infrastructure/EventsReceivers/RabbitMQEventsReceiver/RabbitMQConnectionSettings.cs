@@ -12,13 +12,5 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
         public string Password { get; set; }
         public string VirtualHost { get; set; }
         public bool UseSsl { get; set; }
-
-        public RabbitMQConnectionSettings( string hostName, string userName, string password, bool useSsl )
-        {
-            HostName = hostName;
-            UserName = userName;
-            Password = password;
-            UseSsl = useSsl;
-        }
     }
 }

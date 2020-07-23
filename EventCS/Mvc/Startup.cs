@@ -19,7 +19,7 @@ namespace Mvc
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup( IConfiguration configuration )
         {
             Configuration = configuration;
         }
@@ -31,22 +31,13 @@ namespace Mvc
         {
             services.AddMvc();
 
-            services.AddTransient<IEventRepository>( s => new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) );//введение зависимости, каждый раз при вызове IEventReopsitory будет обращение к SQLEventReopsitory
-            services.AddScoped<IEventCreator, PlainEventCreator>();
-            services.AddTransient<IEventsManager>( s => new EventsManager( new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) ) );
+            //Configs
+            services.AddTransient<IEventRepository>( s => new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) );
+            services.AddTransient<IEventsManager>( s => new LogEventsManager( new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) ) );            
+            services.AddSingleton<IRabbitMQPersistentConnection>( s => new RabbitMQPersistentConnection( RabbitMQPersistentConnection.CreateConnectionFactory( Configuration.GetSection("RabbitMQEventBusSettings:ConnectionSettings").Get<RabbitMQConnectionSettings>() ), Configuration.GetSection( "RabbitMQEventBusSettings" ).Get<RabbitMQEventBusSettings>() ) );
 
-            JToken jAppSettings = JToken.Parse( File.ReadAllText( Path.Combine( Environment.CurrentDirectory, "appsettings.json" ) ) );            
-            var rabbitMQEventBusSettings = new RabbitMQEventBusSettings
-            {
-                Service = jAppSettings["RabbitMQEventBusSettings"]["Service"].ToString(),
-                RetryMessageProcessingSettings = JsonConvert.DeserializeObject<RetryMessageProcessingSettings>( jAppSettings["RabbitMQEventBusSettings"]["RetryMessageProcessingSettings"].ToString() ),
-                ConnectionSettings = JsonConvert.DeserializeObject<RabbitMQConnectionSettings>( jAppSettings["RabbitMQEventBusSettings"]["ConnectionSettings"].ToString() )
-            };
-            var connectionSettings = rabbitMQEventBusSettings.ConnectionSettings;
-
-            services.AddSingleton<IRabbitMQPersistentConnection>( s => new RabbitMQPersistentConnection( RabbitMQPersistentConnection.CreateConnectionFactory( connectionSettings ), rabbitMQEventBusSettings ) );            
             services.AddSingleton<IEventsReceiver, RabbitEventsReceiver>();
-
+            services.AddScoped<IEventCreator, PlainEventCreator>();
 
 
             services.Configure<FormOptions>( o =>
@@ -68,7 +59,8 @@ namespace Mvc
             app.UseStatusCodePages();
 
             var eventsReceiver = app.ApplicationServices.GetService<IEventsReceiver>();
-            eventsReceiver.Init();
+            eventsReceiver.Bind();
+            eventsReceiver.Receive();
 
             app.UseEndpoints( endpoints =>
             {

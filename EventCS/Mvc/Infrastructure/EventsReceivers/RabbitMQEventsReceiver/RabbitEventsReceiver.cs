@@ -27,9 +27,9 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
             _serviceProvider = serviceProvider;
         }
 
-        public void Init()
-        {                                  
-            if ( _rabbitMQPersistentConnection.TryConnect() )
+        public void Bind()
+        {
+            if (_rabbitMQPersistentConnection.TryConnect())
             {
                 _consumerChannel = _rabbitMQPersistentConnection.CreateModel();
 
@@ -40,11 +40,15 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
                                        exclusive: false,
                                        autoDelete: false,
                                        arguments: null);
-
+            }
+        }
+        public void Receive()
+        {                                  
+            if ( _rabbitMQPersistentConnection.TryConnect() )
+            {
                 _consumerChannel.QueueBind(queue: _queueName,
-                                    exchange: _exchangeName,
-                                    routingKey: "#");
-                        
+                                                exchange: _exchangeName,
+                                                routingKey: "#");
                 var consumer = new EventingBasicConsumer( _consumerChannel );
 
                 _consumerChannel.BasicConsume(queue: _queueName,
@@ -63,12 +67,12 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
             using ( var scope = _serviceProvider.CreateScope() )
             { 
                 JsonEventParser jsonEventParser = new JsonEventParser();
-                IEventsManager eventsManager = scope.ServiceProvider.GetService<IEventsManager>();
+                IEventRepository eventRepository = scope.ServiceProvider.GetService<IEventRepository>();
 
                 Event parsedEvent = jsonEventParser.Parse( routingKey, message );
-                if (!(parsedEvent.JsonPropertiesMetaValue == null))
+                if ( !( parsedEvent.JsonPropertiesMetaValue == null ) )
                 {
-                    eventsManager.Add( new List<Event> { parsedEvent } );
+                    eventRepository.Add( parsedEvent );
                 }
             }
         }

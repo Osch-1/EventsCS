@@ -12,15 +12,15 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
+      "launchUrl": "Events/EventsList",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "launchUrl": "Events/EventsList"
+      }
     },
     "Mvc": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "mvc",
+      "launchUrl": "Events/EventsList",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

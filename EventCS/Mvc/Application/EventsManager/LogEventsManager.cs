@@ -6,11 +6,11 @@ using System.Collections.Generic;
 
 namespace Mvc.Application
 {
-    public class EventsManager : IEventsManager
+    public class LogEventsManager : IEventsManager
     {
         private readonly IEventRepository _eventRepository;
         const int MaxAllowedJsonLength = 1000;
-        public EventsManager( IEventRepository eventRepository )
+        public LogEventsManager( IEventRepository eventRepository )
         {
             _eventRepository = eventRepository;
         }

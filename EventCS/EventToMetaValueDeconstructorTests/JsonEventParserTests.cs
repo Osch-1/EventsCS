@@ -35,7 +35,7 @@ namespace EventToMetaValueDeconstructorTests
             Assert.Equal( "SomeEventName", Result.EventKey );            
             Assert.Equal( "Property name: Name\n  Property type: String\n  Sample value: \n  Jhon", Result.JsonPropertiesMetaValue[0].ToString() );
             Assert.Equal( "Property name: age\n  Property type: Number\n  Sample value: \n  32", Result.JsonPropertiesMetaValue[ 1 ].ToString() );
-            Assert.Equal( "Property name: son\n  Property type: Object\n  Sample value: \n  {\r\n  \"Name\": \"Jhon\",\r\n  \"age\": \"12\"\r\n}", Result.JsonPropertiesMetaValue[ 2 ].ToString() );
+            Assert.Equal( "Property name: son\n  Property type: Object\n  Sample value: \n  {\"Name\":\"Jhon\",\"age\":\"12\"}", Result.JsonPropertiesMetaValue[ 2 ].ToString() );
         }
 
         [ Fact ]
@@ -49,7 +49,7 @@ namespace EventToMetaValueDeconstructorTests
 
             //Assert
             Assert.Equal( "SomeEventName", Result.EventKey );               
-            Assert.Equal( "Property name: courses\n  Property type: List\n  Sample value: \n  [\r\n  \"html\",\r\n  \"css\"\r\n]", Result.JsonPropertiesMetaValue[ 0 ].ToString() );
+            Assert.Equal( "Property name: courses\n  Property type: List\n  Sample value: \n  [\"html\",\"css\"]", Result.JsonPropertiesMetaValue[ 0 ].ToString() );
         }
     }
 }
