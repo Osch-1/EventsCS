@@ -12,5 +12,6 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
         public string Password { get; set; }
         public string VirtualHost { get; set; }
         public bool UseSsl { get; set; }
+        public int ConnectionRetryCount { get; set; } = 5;
     }
 }

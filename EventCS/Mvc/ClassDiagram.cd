@@ -3,14 +3,9 @@
   <Class Name="Mvc.Controllers.EventsController" Collapsed="true">
     <Position X="5.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EAIAQAAAAAAAJABAAAAAAAAAAAAAAAAAAIAAACQAAAA=</HashCode>
+      <HashCode>EAIAQAAAAAAAJQBAAAAAAAAAAAAAAAAAAIAAACQAAAA=</HashCode>
       <FileName>Controllers\EventsController.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="_eventRepository" />
-      <Field Name="_jsonCreator" />
-      <Field Name="_eventsHandler" />
-    </ShowAsAssociation>
   </Class>
   <Class Name="EventToMetaValueDeconstructor.JpropertyTypeDeterminator" Collapsed="true">
     <Position X="9.75" Y="2.25" Width="1.5" />
@@ -32,26 +27,5 @@
     <Position X="8" Y="3.25" Width="1.5" />
     <TypeIdentifier />
   </Class>
-  <Interface Name="Mvc.IEventRepository" Collapsed="true">
-    <Position X="2.5" Y="4.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAYAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAADAA=</HashCode>
-      <FileName>Data\Interfaces\IEventRepository.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="Mvc.Application.EventsHandler.IEventsHandler" Collapsed="true">
-    <Position X="5.5" Y="2.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
-      <FileName>Application\EventsHandler\IEventsHandler.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="Mvc.Application.JsonCreator.IJsonCreator" Collapsed="true">
-    <Position X="5.5" Y="6.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
-      <FileName>Application\JsonCreator\IJsonCreator.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

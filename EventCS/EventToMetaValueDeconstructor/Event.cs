@@ -10,18 +10,21 @@ namespace EventToMetaValueDeconstructor
         public string EventKey { get; set; }
         public List<JsonProperty> JsonPropertiesMetaValue { get; set; }
         public DateTime CreationDate { get; set; }
+
         public Event()
         {
             CreationDate = DateTime.Now;
             EventKey = "";
             JsonPropertiesMetaValue = new List<JsonProperty>();
         }
+
         public Event( string key, List<JsonProperty> listOfProperties, DateTime creationDate )
         {
             CreationDate = creationDate;
             EventKey = key;
             JsonPropertiesMetaValue = listOfProperties;
         }
+
         public override string ToString()
         {
             string properties = "";

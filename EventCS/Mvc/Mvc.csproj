@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="db-migrations\" />
+    <Folder Include="Db-migrations\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -8,6 +8,6 @@ namespace Mvc.Application.Interfaces
 {
     public interface IEventsReceiver
     {        
-        void Receive();
+        void Init();
     }
 }

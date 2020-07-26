@@ -26,6 +26,7 @@ namespace Mvc.Application
             {
                 string eventFromLogKey = substringGetter.Get( eventsToAdd, "key:", "," );
                 string jsonFromLog = substringGetter.Get( eventsToAdd, "json:", "\n" );
+
                 if ( ( String.IsNullOrEmpty( eventFromLogKey ) ) || ( String.IsNullOrEmpty( jsonFromLog ) ) )
                 {
                     break;
@@ -51,7 +52,6 @@ namespace Mvc.Application
             foreach ( Event parsedEvent in events )
             {
                 string eventFromLogKey = parsedEvent.EventKey;
-
                 Event existingEvent = _eventRepository.GetEvent( eventFromLogKey );
 
                 if ( existingEvent == null )

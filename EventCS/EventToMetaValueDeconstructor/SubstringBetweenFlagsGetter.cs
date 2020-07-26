@@ -11,7 +11,7 @@ namespace EventToMetaValueDeconstructor
         {
             if ( String.IsNullOrEmpty( inputLine ) )
                 return "";
-            if ( ( inputLine.IndexOf( propertyName ) < 0 ) | ( propertyName == "" ) | ( endingFlag == "" ) )
+            if ( ( propertyName == "" ) || ( endingFlag == "" ) || ( inputLine.IndexOf( propertyName ) < 0 ) )
                 return "";
 
             //начало названия события                                        
@@ -19,16 +19,16 @@ namespace EventToMetaValueDeconstructor
             int PropertyValueEndIndex = inputLine.IndexOf( endingFlag, PropertyValueStartIndex );
             int PropertValueLength = PropertyValueEndIndex - PropertyValueStartIndex;
 
-            if ( ( PropertyValueStartIndex >= 0 ) & ( PropertyValueEndIndex >= 0 ) )
+            if ( ( PropertyValueStartIndex >= 0 ) && ( PropertyValueEndIndex >= 0 ) )
                 return inputLine.Substring( PropertyValueStartIndex, PropertValueLength );
             else
-                return "";
+                return null;
         }
 
         public string Get( string inputLine, string propertyName )
         {
-            if ( ( inputLine.IndexOf( propertyName ) < 0 ) | ( propertyName == "" ) )
-                return "";
+            if ( ( inputLine.IndexOf( propertyName ) < 0 ) || ( propertyName == "" ) )
+                return null;
 
             //начало названия события
             int PropertyValueStartIndex = inputLine.IndexOf( propertyName ) + propertyName.Length;

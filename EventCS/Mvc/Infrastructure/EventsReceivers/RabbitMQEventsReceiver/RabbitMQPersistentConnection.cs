@@ -15,7 +15,7 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
 {
     public class RabbitMQPersistentConnection: IRabbitMQPersistentConnection
     {
-        readonly RabbitMQEventBusSettings _settings;
+        readonly RabbitMQConnectionSettings _settings;
         readonly IConnectionFactory _connectionFactory;
 
         IConnection _connection;
@@ -23,7 +23,7 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
 
         object sync_root = new object();
 
-        public RabbitMQPersistentConnection( IConnectionFactory connectionFactory, RabbitMQEventBusSettings settings )
+        public RabbitMQPersistentConnection( IConnectionFactory connectionFactory, RabbitMQConnectionSettings settings )
         {
             _connectionFactory = connectionFactory;
             _settings = settings;
@@ -35,7 +35,7 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
         {
             if ( !IsConnected )
             {
-                throw new InvalidOperationException("No RabbitMQ connections are available to perform this action");
+                throw new InvalidOperationException( "No RabbitMQ connections are available to perform this action" );
             }
 
             return _connection.CreateModel();
@@ -43,7 +43,7 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
 
         public void Dispose()
         {
-            if (_disposed) return;
+            if ( _disposed ) return;
 
             _disposed = true;
 
@@ -60,10 +60,10 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
         public bool TryConnect()
         {
 
-            lock (sync_root)
+            lock ( sync_root )
             {
                 var policy = RetryPolicy.Handle<SocketException>().Or<BrokerUnreachableException>()
-                    .WaitAndRetry( _settings.ConnectionRetryCount, retryAttempt => TimeSpan.FromSeconds( Math.Pow(2, retryAttempt ) ), ( ex, time ) =>
+                    .WaitAndRetry( _settings.ConnectionRetryCount, retryAttempt => TimeSpan.FromSeconds( Math.Pow( 2, retryAttempt ) ), ( ex, time ) =>
                     {
 
                     }
@@ -97,8 +97,7 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
                 VirtualHost = settings.VirtualHost
             };
 
-            //Взял из реализации в masstransit
-            if (settings.UseSsl)
+            if ( settings.UseSsl )
             {
                 connectionFactory.Ssl.Enabled = true;
                 connectionFactory.Ssl.ServerName = string.Empty;

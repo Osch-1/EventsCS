@@ -14,7 +14,7 @@ namespace EventToMetaValueDeconstructor
 
         public Event Parse( string eventKey, string json )
         {
-            if ( ( json == "" ) | ( !( IsJson(json) ) ) )
+            if ( ( json == "" ) || ( !( IsJson(json) ) ) )
                 return new Event();
 
             DateTime creationDate = DateTime.Now;

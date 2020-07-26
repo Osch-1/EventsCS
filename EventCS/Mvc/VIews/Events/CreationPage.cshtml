@@ -19,7 +19,7 @@
                     <label for="eventInfo_EnteredPropertiesValue[@i]_Name" class="mt-1">@jsonProperty.PropertyName (@jsonProperty.PropertyType)</label>
                     <div class="row w-100">
                         <div class="col-sm-3">
-                            @if ( !( Model.EnteredPropertiesValues == null ) )
+                            @if ( Model.EnteredPropertiesValues != null )
                             {
                                 previousValue = Model.EnteredPropertiesValues[ i ];
                             }
@@ -54,7 +54,7 @@
             <button type="submit" class="btn btn-success btn-lg mb-3">Сгенерировать json</button>
         </fieldset>
     </form>
-    @if (!(String.IsNullOrEmpty(Model.CreatedJson)))
+    @if ( !( String.IsNullOrEmpty( Model.CreatedJson ) ) )
     {
         <label for="CreatedJson" class="mt-1">Сгенерированный Json:</label>
         <textarea id="CreatedJson" class="w-100" rows="2" disabled>@Model.CreatedJson</textarea>

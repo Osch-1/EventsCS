@@ -15,7 +15,8 @@ namespace Mvc.Controllers
     {
         private readonly IEventRepository _eventRepository;
         private readonly IEventCreator _jsonCreator;
-        private readonly IEventsManager _eventsHandler;        
+        private readonly IEventsManager _eventsHandler; 
+        
         public EventsController( IEventRepository eventRepository, IEventCreator jsonCreator, IEventsManager eventsHandler )
         {
             _eventRepository = eventRepository;
@@ -127,7 +128,7 @@ namespace Mvc.Controllers
         [AllowAnonymous]
         public ViewResult Error()
         {
-            return CreateErrorView("");
+            return CreateErrorView( "" );
         }
 
         //возвращает страницу с ошибкой
