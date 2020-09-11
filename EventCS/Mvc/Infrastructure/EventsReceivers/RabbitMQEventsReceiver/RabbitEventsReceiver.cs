@@ -76,7 +76,12 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
             JsonEventParser jsonEventParser = new JsonEventParser();
             IEventRepository eventRepository = scope.ServiceProvider.GetService<IEventRepository>();
 
+            if  ( ( message == null ) || ( message == "" ) )
+                return;
+
             Event parsedEvent = jsonEventParser.Parse( routingKey, message );
+
+            Console.WriteLine(routingKey, ' ', parsedEvent);
 
             string eventFromLogKey = parsedEvent.EventKey;
             Event existingEvent = eventRepository.GetEvent( eventFromLogKey );
