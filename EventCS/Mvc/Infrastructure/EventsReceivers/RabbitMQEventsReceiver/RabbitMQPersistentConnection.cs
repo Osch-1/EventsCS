@@ -59,9 +59,10 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
 
         public bool TryConnect()
         {
-
             lock ( sync_root )
             {
+                //Задаем поведение при попытке подключиться
+                //Будем пытать подключиться несколько раз, с промежутком, который растет по экспоненте, при каждой итерации передаем информацию о полученном исключении и задержке
                 var policy = RetryPolicy.Handle<SocketException>().Or<BrokerUnreachableException>()
                     .WaitAndRetry( _settings.ConnectionRetryCount, retryAttempt => TimeSpan.FromSeconds( Math.Pow( 2, retryAttempt ) ), ( ex, time ) =>
                     {
@@ -69,11 +70,14 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
                     }
                 );
 
-                policy.Execute(() =>
+                //Пробуем подключиться
+                policy.Execute( () =>
                 {
                     _connection = _connectionFactory.CreateConnection();
-                });
+                } );
 
+
+                //Проверяем смогли ли мы подключиться
                 if ( IsConnected )
                 {
 

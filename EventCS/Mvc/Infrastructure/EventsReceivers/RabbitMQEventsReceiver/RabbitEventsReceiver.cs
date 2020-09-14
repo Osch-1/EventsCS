@@ -48,6 +48,7 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
                     queue: _queueName,
                     exchange: _exchangeName,
                     routingKey: "#" );
+
                 EventingBasicConsumer consumer = new EventingBasicConsumer( _consumerChannel );
 
                 _consumerChannel.BasicConsume(
@@ -79,9 +80,8 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
             if  ( ( message == null ) || ( message == "" ) )
                 return;
 
-            Event parsedEvent = jsonEventParser.Parse( routingKey, message );
 
-            Console.WriteLine(routingKey, ' ', parsedEvent);
+            Event parsedEvent = jsonEventParser.Parse( routingKey, message );
 
             string eventFromLogKey = parsedEvent.EventKey;
             Event existingEvent = eventRepository.GetEvent( eventFromLogKey );

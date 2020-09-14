@@ -35,6 +35,8 @@ namespace Mvc
             //Configs
             services.AddScoped<IEventRepository>( s => new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) );
             services.AddScoped<IEventsManager>( s => new LogEventsManager( new SQLEventRepository( Configuration.GetConnectionString( "LocalEventDb" ) ) ) );
+            services.AddScoped<IEventCreator, PlainEventCreator>();
+
             services.AddSingleton( Configuration.GetSection( "RabbitMQConnectionSettings" ).Get<RabbitMQConnectionSettings>() );
             services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
             {
@@ -42,8 +44,7 @@ namespace Mvc
             });
             services.AddSingleton<IRabbitMQPersistentConnection, RabbitMQPersistentConnection>();
 
-            services.AddSingleton<IEventsReceiver, RabbitEventsReceiver>();
-            services.AddScoped<IEventCreator, PlainEventCreator>();
+            services.AddSingleton<IEventsReceiver, RabbitEventsReceiver>();            
             
             services.Configure<FormOptions>( o =>
             {
@@ -59,8 +60,8 @@ namespace Mvc
         {
             app.UseExceptionHandler("/Events/Error");
             app.UseHsts();
-            app.UseStaticFiles();// отображать css
-            app.UseRouting(); // используем систему маршрутизации    
+            app.UseStaticFiles();
+            app.UseRouting();
             app.UseStatusCodePages();
 
             var eventsReceiver = app.ApplicationServices.GetService<IEventsReceiver>();
