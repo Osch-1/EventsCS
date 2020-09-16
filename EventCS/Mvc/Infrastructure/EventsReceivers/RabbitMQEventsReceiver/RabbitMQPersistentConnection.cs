@@ -80,7 +80,6 @@ namespace Mvc.Infrastructure.EventsReceivers.RabbitMQEventsReceiver
                 //Проверяем смогли ли мы подключиться
                 if ( IsConnected )
                 {
-
                     return true;
                 }
                 else
